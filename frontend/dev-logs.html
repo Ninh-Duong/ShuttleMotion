@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local process logs · ShuttleMotion</title>
+  <link rel="stylesheet" href="/site.css">
+  <script src="/logs.js" defer></script>
+</head>
+<body>
+  <main class="shell wide">
+    <a href="/">← ShuttleMotion</a>
+    <p class="eyebrow">Local diagnostics</p>
+    <h1>Process logs</h1>
+    <p>Recent startup, dependency, request, and server events. This page is available only on localhost.</p>
+    <form id="filters" class="filters">
+      <label>Level <select name="level"><option value="">All levels</option><option value="info">Info</option><option value="error">Error</option></select></label>
+      <label>Search <input name="search" type="search" placeholder="Event or route"></label>
+      <button type="submit">Apply</button>
+    </form>
+    <p id="status" role="status" aria-live="polite">Loading…</p>
+    <div class="table-wrap"><table><thead><tr><th>Time</th><th>Level</th><th>Event</th><th>Details</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </main>
+</body>
+</html>

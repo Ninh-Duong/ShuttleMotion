@@ -1,0 +1,12 @@
+{
+  "name": "shuttlemotion",
+  "private": true,
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "start": "node backend/server.mjs",
+    "deploy:prepare": "node scripts/deploy-prepare.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "reference:generate": "node scripts/generate-badminton-reference.mjs"
+  }
+}

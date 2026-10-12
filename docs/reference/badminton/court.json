@@ -1,0 +1,419 @@
+{
+  "schemaVersion": 1,
+  "id": "bwf-standard-indoor-2025",
+  "unit": "m",
+  "coordinates": {
+    "origin": "Centre of the court floor at the net plane",
+    "x": "Across the court",
+    "y": "Upward",
+    "z": "Along the court",
+    "positiveSide": "z > 0; the player faces -z, so their right side is +x",
+    "boundsConvention": "Painted outer edges, not line centrelines. All court lines lie on y=0."
+  },
+  "dimensions": {
+    "length": 13.4,
+    "doublesWidth": 6.1,
+    "singlesWidth": 5.18,
+    "lineWidth": 0.04,
+    "reference": {
+      "sourceId": "bwf-2025-v5-0-1",
+      "clauses": [
+        "1.1",
+        "1.3",
+        "Diagram A"
+      ],
+      "pages": [
+        1,
+        2
+      ]
+    }
+  },
+  "markings": {
+    "reference": {
+      "sourceId": "bwf-2025-v5-0-1",
+      "clauses": [
+        "1.1",
+        "1.3",
+        "Diagram A"
+      ],
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "rectangles": [
+      {
+        "id": "doubles-side-negative",
+        "bounds": {
+          "xMin": -3.05,
+          "xMax": -3.01,
+          "zMin": -6.7,
+          "zMax": 6.7
+        },
+        "label": "Doubles sideline"
+      },
+      {
+        "id": "singles-side-negative",
+        "bounds": {
+          "xMin": -2.59,
+          "xMax": -2.55,
+          "zMin": -6.7,
+          "zMax": 6.7
+        },
+        "label": "Singles sideline"
+      },
+      {
+        "id": "baseline-negative",
+        "bounds": {
+          "xMin": -3.05,
+          "xMax": 3.05,
+          "zMin": -6.7,
+          "zMax": -6.66
+        },
+        "label": "Back boundary / singles long service line"
+      },
+      {
+        "id": "short-service-negative",
+        "bounds": {
+          "xMin": -3.05,
+          "xMax": 3.05,
+          "zMin": -2.02,
+          "zMax": -1.98
+        },
+        "label": "Short service line"
+      },
+      {
+        "id": "doubles-long-service-negative",
+        "bounds": {
+          "xMin": -3.05,
+          "xMax": 3.05,
+          "zMin": -5.94,
+          "zMax": -5.9
+        },
+        "label": "Doubles long service line"
+      },
+      {
+        "id": "centre-negative",
+        "bounds": {
+          "xMin": -0.02,
+          "xMax": 0.02,
+          "zMin": -6.66,
+          "zMax": -2.02
+        },
+        "label": "Centre service line"
+      },
+      {
+        "id": "doubles-side-positive",
+        "bounds": {
+          "xMin": 3.01,
+          "xMax": 3.05,
+          "zMin": -6.7,
+          "zMax": 6.7
+        },
+        "label": "Doubles sideline"
+      },
+      {
+        "id": "singles-side-positive",
+        "bounds": {
+          "xMin": 2.55,
+          "xMax": 2.59,
+          "zMin": -6.7,
+          "zMax": 6.7
+        },
+        "label": "Singles sideline"
+      },
+      {
+        "id": "baseline-positive",
+        "bounds": {
+          "xMin": -3.05,
+          "xMax": 3.05,
+          "zMin": 6.66,
+          "zMax": 6.7
+        },
+        "label": "Back boundary / singles long service line"
+      },
+      {
+        "id": "short-service-positive",
+        "bounds": {
+          "xMin": -3.05,
+          "xMax": 3.05,
+          "zMin": 1.98,
+          "zMax": 2.02
+        },
+        "label": "Short service line"
+      },
+      {
+        "id": "doubles-long-service-positive",
+        "bounds": {
+          "xMin": -3.05,
+          "xMax": 3.05,
+          "zMin": 5.9,
+          "zMax": 5.94
+        },
+        "label": "Doubles long service line"
+      },
+      {
+        "id": "centre-positive",
+        "bounds": {
+          "xMin": -0.02,
+          "xMax": 0.02,
+          "zMin": 2.02,
+          "zMax": 6.66
+        },
+        "label": "Centre service line"
+      }
+    ]
+  },
+  "rallyAreas": {
+    "reference": {
+      "sourceId": "bwf-2025-v5-0-1",
+      "clauses": [
+        "Diagram A",
+        "13.3.1"
+      ],
+      "pages": [
+        2,
+        8
+      ]
+    },
+    "boundary": "inclusive",
+    "rectangles": [
+      {
+        "id": "singles",
+        "xMin": -2.59,
+        "xMax": 2.59,
+        "zMin": -6.7,
+        "zMax": 6.7
+      },
+      {
+        "id": "doubles",
+        "xMin": -3.05,
+        "xMax": 3.05,
+        "zMin": -6.7,
+        "zMax": 6.7
+      }
+    ],
+    "note": "Whole-court regions for highlighting. A shuttle must land on the opponent’s side; this is not a match adjudication engine."
+  },
+  "serviceAreas": {
+    "reference": {
+      "sourceId": "bwf-2025-v5-0-1",
+      "clauses": [
+        "Diagram A",
+        "9.1",
+        "9.1.3",
+        "9.1.4"
+      ],
+      "pages": [
+        2,
+        5,
+        6
+      ]
+    },
+    "landingBoundary": "inclusive",
+    "standingBoundary": "exclusive",
+    "standingMeaning": "The whole area of each foot in contact with the floor must remain inside the open region; checking one point cannot establish a legal stance.",
+    "rectangles": [
+      {
+        "id": "singles-negative-x-negative",
+        "mode": "singles",
+        "side": "negative",
+        "xHalf": "negative",
+        "playerCourt": "right",
+        "diagonalReceiverId": "singles-positive-x-positive",
+        "landing": {
+          "xMin": -2.59,
+          "xMax": 0.02,
+          "zMin": -6.7,
+          "zMax": -1.98
+        },
+        "standing": {
+          "xMin": -2.55,
+          "xMax": -0.02,
+          "zMin": -6.66,
+          "zMax": -2.02
+        }
+      },
+      {
+        "id": "singles-negative-x-positive",
+        "mode": "singles",
+        "side": "negative",
+        "xHalf": "positive",
+        "playerCourt": "left",
+        "diagonalReceiverId": "singles-positive-x-negative",
+        "landing": {
+          "xMin": -0.02,
+          "xMax": 2.59,
+          "zMin": -6.7,
+          "zMax": -1.98
+        },
+        "standing": {
+          "xMin": 0.02,
+          "xMax": 2.55,
+          "zMin": -6.66,
+          "zMax": -2.02
+        }
+      },
+      {
+        "id": "singles-positive-x-negative",
+        "mode": "singles",
+        "side": "positive",
+        "xHalf": "negative",
+        "playerCourt": "left",
+        "diagonalReceiverId": "singles-negative-x-positive",
+        "landing": {
+          "xMin": -2.59,
+          "xMax": 0.02,
+          "zMin": 1.98,
+          "zMax": 6.7
+        },
+        "standing": {
+          "xMin": -2.55,
+          "xMax": -0.02,
+          "zMin": 2.02,
+          "zMax": 6.66
+        }
+      },
+      {
+        "id": "singles-positive-x-positive",
+        "mode": "singles",
+        "side": "positive",
+        "xHalf": "positive",
+        "playerCourt": "right",
+        "diagonalReceiverId": "singles-negative-x-negative",
+        "landing": {
+          "xMin": -0.02,
+          "xMax": 2.59,
+          "zMin": 1.98,
+          "zMax": 6.7
+        },
+        "standing": {
+          "xMin": 0.02,
+          "xMax": 2.55,
+          "zMin": 2.02,
+          "zMax": 6.66
+        }
+      },
+      {
+        "id": "doubles-negative-x-negative",
+        "mode": "doubles",
+        "side": "negative",
+        "xHalf": "negative",
+        "playerCourt": "right",
+        "diagonalReceiverId": "doubles-positive-x-positive",
+        "landing": {
+          "xMin": -3.05,
+          "xMax": 0.02,
+          "zMin": -5.94,
+          "zMax": -1.98
+        },
+        "standing": {
+          "xMin": -3.01,
+          "xMax": -0.02,
+          "zMin": -5.9,
+          "zMax": -2.02
+        }
+      },
+      {
+        "id": "doubles-negative-x-positive",
+        "mode": "doubles",
+        "side": "negative",
+        "xHalf": "positive",
+        "playerCourt": "left",
+        "diagonalReceiverId": "doubles-positive-x-negative",
+        "landing": {
+          "xMin": -0.02,
+          "xMax": 3.05,
+          "zMin": -5.94,
+          "zMax": -1.98
+        },
+        "standing": {
+          "xMin": 0.02,
+          "xMax": 3.01,
+          "zMin": -5.9,
+          "zMax": -2.02
+        }
+      },
+      {
+        "id": "doubles-positive-x-negative",
+        "mode": "doubles",
+        "side": "positive",
+        "xHalf": "negative",
+        "playerCourt": "left",
+        "diagonalReceiverId": "doubles-negative-x-positive",
+        "landing": {
+          "xMin": -3.05,
+          "xMax": 0.02,
+          "zMin": 1.98,
+          "zMax": 5.94
+        },
+        "standing": {
+          "xMin": -3.01,
+          "xMax": -0.02,
+          "zMin": 2.02,
+          "zMax": 5.9
+        }
+      },
+      {
+        "id": "doubles-positive-x-positive",
+        "mode": "doubles",
+        "side": "positive",
+        "xHalf": "positive",
+        "playerCourt": "right",
+        "diagonalReceiverId": "doubles-negative-x-negative",
+        "landing": {
+          "xMin": -0.02,
+          "xMax": 3.05,
+          "zMin": 1.98,
+          "zMax": 5.94
+        },
+        "standing": {
+          "xMin": 0.02,
+          "xMax": 3.01,
+          "zMin": 2.02,
+          "zMax": 5.9
+        }
+      }
+    ]
+  },
+  "equipment": {
+    "reference": {
+      "sourceId": "bwf-2025-v5-0-1",
+      "clauses": [
+        "1.4–1.11"
+      ],
+      "pages": [
+        1,
+        2
+      ]
+    },
+    "net": {
+      "z": 0,
+      "widthMin": 6.1,
+      "depth": 0.76,
+      "centreTopHeight": 1.524,
+      "sidelineTopHeight": 1.55,
+      "tapeWidth": 0.075,
+      "meshMin": 0.015,
+      "meshMax": 0.02,
+      "note": "The Laws fix the height at the centre and doubles sidelines; interpolation between these points is illustrative. Leave no gap between the net and posts."
+    },
+    "posts": {
+      "height": 1.55,
+      "anchors": [
+        {
+          "x": -3.05,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "x": 3.05,
+          "y": 0,
+          "z": 0
+        }
+      ],
+      "note": "Anchoring at the outer edge of the doubles sideline is a model convention; these Laws do not specify post cross-section. Posts and supports must not intrude into the court."
+    }
+  },
+  "optionalTestingMarks": "Optional shuttle speed testing marks from Diagram B are not shown."
+}
