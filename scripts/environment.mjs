@@ -52,7 +52,7 @@ export function prepareDependencies({ cwd = process.cwd(), force = false, report
     report(reason);
     if (force || reason !== 'No external packages declared.') {
       report('Installing packages from package-lock.json with npm ci...');
-      if (!runNpm(['ci', '--no-audit', '--no-fund'], cwd)) {
+      if (!runNpm(['ci', '--no-audit', '--no-fund', '--cache', join(cwd, '.local', 'npm-cache')], cwd)) {
         throw new Error('npm ci failed. Check network access, npm output, and the lockfile.');
       }
       report('Dependency installation completed.');

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10282a">
+  <title>ShuttleMotion · Doubles Training</title>
+  <link rel="stylesheet" href="/site.css">
+  <script type="importmap">
+  {"imports":{"three":"/vendor/three.module.js","three/addons/":"/vendor/addons/"}}
+  </script>
+  <script type="module" src="/training-app.mjs"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="ShuttleMotion"><span class="brand-mark" aria-hidden="true">S</span><span>Shuttle<span class="brand-light">Motion</span></span></a>
+    <div class="topbar-right"><a class="topbar-link" href="/" data-i18n="courtLink">Sân</a><a class="topbar-link" href="/shot" data-i18n="shotLink">Mô phỏng cú đánh</a><button id="language" class="language-button" type="button">EN</button></div>
+  </header>
+  <main class="app-layout">
+    <section class="viewer-section" aria-labelledby="lesson-title">
+      <div class="intro">
+        <p class="kicker" data-i18n="kicker">LUYỆN TẬP ĐÁNH ĐÔI</p>
+        <h1 id="lesson-title">—</h1>
+        <p class="lesson-meta"><span class="draft-badge" data-i18n="draft">Bản nháp từ giáo trình BWF · chờ HLV duyệt</span></p>
+        <p id="lesson-objective" class="intro-copy"></p>
+      </div>
+      <div class="stage">
+        <div class="stage-label"><span class="live-dot"></span><span data-i18n="stageLabel">DI CHUYỂN 2 ĐẤU 2</span></div>
+        <div id="court-host" class="court-host" aria-live="polite"></div>
+        <div class="stage-footer">
+          <span id="stage-status" role="status" data-i18n="loading">Đang tải…</span>
+          <div class="zoom-actions">
+            <button id="prev" type="button" aria-label="Previous step">⏮</button>
+            <button id="play" type="button" class="run-button" data-i18n="playAll">▶ Phát</button>
+            <button id="next" type="button" aria-label="Next step">⏭</button>
+            <select id="rate" aria-label="Speed"><option value="1">1×</option><option value="0.5">0,5×</option><option value="0.25">0,25×</option></select>
+            <button id="top-view" type="button" data-i18n="topView">Nhìn từ trên</button>
+            <button id="reset-view" type="button" data-i18n="reset">Đặt lại</button>
+          </div>
+        </div>
+      </div>
+      <article id="step-card" class="step-card" aria-live="polite">
+        <p class="step-count" id="step-count"></p>
+        <p class="step-caption" id="step-caption"></p>
+        <blockquote id="step-quote"><p></p><cite></cite></blockquote>
+      </article>
+    </section>
+    <aside class="details">
+      <div class="sandbox">
+        <h3 data-i18n="libraryTitle">BÀI HỌC</h3>
+        <nav id="library" class="library"></nav>
+      </div>
+      <div class="sandbox">
+        <h3 data-i18n="playersTitle">NGƯỜI CHƠI</h3>
+        <ul id="legend" class="legend-list"></ul>
+      </div>
+      <div class="sandbox">
+        <h3 data-i18n="notesTitle">GHI CHÚ</h3>
+        <ul id="notes" class="notes-list"></ul>
+        <h3 class="shot-section" data-i18n="sourcesTitle">NGUỒN</h3>
+        <ul id="sources" class="notes-list"></ul>
+      </div>
+    </aside>
+  </main>
+</body>
+</html>

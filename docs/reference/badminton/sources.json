@@ -15,11 +15,13 @@
       "sha256": "157fa96afbd670d30bbd5372c4a0c90dfb4d33f0e5d31073e54659522982fab7",
       "usedSections": [
         "Law 1 / Diagram A",
+        "Laws 2–3",
         "Laws 7–15"
       ],
       "usedPages": [
         1,
         2,
+        3,
         5,
         6,
         7,

@@ -25,12 +25,12 @@ The repository foundation is complete when:
 
 - Product scope and architecture decisions are recorded here and in `ARCHITECTURE.md`.
 - Frontend and backend have clearly owned directories and responsibilities.
-- The initial runtime is Node.js 22+ with plain HTML, CSS, and JavaScript. A 3D library, database, and hosting choice wait until the first lesson and target devices are defined.
+- The runtime is Node.js 22+ with plain HTML, CSS, and JavaScript; the court viewer uses the pinned `three` package. Database and hosting choices wait until lesson and deployment needs are defined.
 - The first lesson has enough coach-reviewed source material to describe its steps and expected movement.
 
-## First usable slice (proposed)
+## First usable slice
 
-The court reference data prerequisite is implemented in `reference/badminton/`: JSON geometry, generated SVG, version-pinned English rules, source metadata, and Node.js unit tests. A minimal local website and diagnostics page provide a runnable foundation. Court viewers and lesson functionality remain planned.
+The court reference data prerequisite is implemented in `reference/badminton/`: JSON geometry, generated SVG, version-pinned English rules, source metadata, and Node.js unit tests. The responsive 2D/3D court viewer is the first learner-facing feature. The shuttle vector sandbox (typed shuttle and player placement with physics candidate paths, see `FEATURE_SHUTTLE_SANDBOX_PLAN.md`) is implemented, with a separate shot lab page at `/shot` that simulates a hit from a coach-entered speed and racket-face angle, with two player figures, a hitter and a receiver. Each has a profile (sex, height, mass, jump fitness or a measured jump), and the page shows whether that player can reach the shuttle. A doubles training page at `/training` (see `FEATURE_DOUBLES_TRAINING_PLAN.md`) loads eight lessons through the backend lesson API. They are drafts derived from cited BWF pages, pending coach review, so the coach-reviewed lesson below is still open. A run-test mode animates an incoming shuttle from B, A's jump and hit from where A stands, and suggests a better stand spot when A cannot reach. Lessons and player movement remain planned.
 
 - One competition-standard court viewer with a 2D/3D switch and singles/doubles boundary emphasis, as scoped in `FEATURE_COMPETITION_COURT_PLAN.md`.
 - One coach-reviewed movement lesson.

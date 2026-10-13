@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10282a">
+  <title>ShuttleMotion · Shot Lab</title>
+  <link rel="stylesheet" href="/site.css">
+  <script type="importmap">
+  {"imports":{"three":"/vendor/three.module.js","three/addons/":"/vendor/addons/"}}
+  </script>
+  <script type="module" src="/shot-app.mjs"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="ShuttleMotion"><span class="brand-mark" aria-hidden="true">S</span><span>Shuttle<span class="brand-light">Motion</span></span></a>
+    <div class="topbar-right"><a class="topbar-link" href="/" data-i18n="courtLink">Sân</a><a class="topbar-link" href="/training" data-i18n="trainingLink">Luyện tập đánh đôi</a><button id="language" class="language-button" type="button">EN</button></div>
+  </header>
+  <main class="app-layout">
+    <section class="viewer-section" aria-labelledby="page-title">
+      <div class="intro"><p class="kicker" data-i18n="kicker">MÔ PHỎNG CÚ ĐÁNH</p><h1 id="page-title" data-i18n="title">Mặt vợt quyết định đường cầu.</h1><p class="intro-copy" data-i18n="intro">Nhập điểm tiếp cầu, tốc độ và góc mặt vợt. Quả cầu bay theo đúng thông số đó: qua lưới, vào lưới hay ra ngoài.</p></div>
+      <div class="toolbar">
+        <div class="segmented" role="group" id="mode-group"><button type="button" data-mode="singles" aria-pressed="true" data-i18n="singles">Đơn</button><button type="button" data-mode="doubles" aria-pressed="false" data-i18n="doubles">Đôi</button></div>
+        <span class="toolbar-spacer"></span><span class="view-hint" data-i18n="hint">Kéo để xoay, cuộn để phóng to</span>
+      </div>
+      <div class="stage">
+        <div class="stage-label"><span class="live-dot"></span><span data-i18n="stageLabel">ĐƯỜNG CẦU THEO THÔNG SỐ</span></div>
+        <div id="court-host" class="court-host" aria-live="polite"></div>
+        <div class="stage-footer"><span id="stage-status" role="status" data-i18n="loading">Đang tải…</span><div class="zoom-actions"><button id="run" type="button" class="run-button" data-i18n="run">▶ Chạy thử</button><label class="slow"><input id="slow" type="checkbox"><span data-i18n="slow">Chậm ×0,25</span></label><button id="zoom-out" type="button" aria-label="−">−</button><button id="zoom-in" type="button" aria-label="+">+</button><button id="hitter-view" type="button" data-i18n="hitterView">Góc người đánh</button><button id="close-view" type="button" data-i18n="closeView">Cận cảnh</button><button id="reset-view" type="button" data-i18n="reset">Đặt lại</button></div></div>
+      </div>
+    </section>
+    <aside class="details">
+      <form id="shot-form" class="sandbox" novalidate>
+        <div class="segmented scenario" role="group" id="scenario-group"><button type="button" data-scenario="incoming" aria-pressed="true" data-i18n="incomingMode">Cầu bay tới</button><button type="button" data-scenario="fixed" aria-pressed="false" data-i18n="fixedMode">Cầu đứng yên</button></div>
+        <label class="side-select"><span data-i18n="side">Phía người đánh A</span><select name="side"><option value="A">A</option><option value="B">B</option></select></label>
+        <div class="incoming-only">
+          <h3 class="shot-section" data-i18n="incomingTitle">CẦU BAY TỚI · B ĐÁNH SANG</h3>
+          <p class="sandbox-note" data-i18n="incomingHint">B đánh từ vị trí trong thẻ người chơi B. Chọn điểm cầu sẽ rơi xuống bên A nếu A không đánh.</p>
+          <div class="sandbox-fields">
+            <label><span data-i18n="inHeight">Độ cao B đánh (m)</span><input name="in-height" type="number" step="0.05" min="0.1" max="3.5" value="2.3"></label>
+            <label><span data-i18n="inSpeed">Tốc độ cầu (m/s)</span><input name="in-speed" type="number" step="any" min="5" max="100" value="47.76"></label>
+            <label><span data-i18n="inLeft">Rơi: lệch trái của A (m)</span><input name="in-left" type="number" step="0.05" min="-3.05" max="3.05" value="1"></label>
+            <label><span data-i18n="inFromNet">Rơi: cách lưới (m)</span><input name="in-fromNet" type="number" step="0.1" min="0.1" max="6.7" value="5.6"></label>
+            <label><span data-i18n="arc">Kiểu cầu</span><select name="in-arc"><option value="high" data-i18n="arcHigh">Bổng (cao sâu)</option><option value="flat" data-i18n="arcFlat">Thấp (thẳng)</option></select></label>
+          </div>
+          <div id="run-result" class="shot-result run-result" aria-live="polite"></div>
+        </div>
+        <div class="fixed-only" hidden>
+          <h3 class="shot-section" data-i18n="contactTitle">ĐIỂM TIẾP CẦU</h3>
+          <div class="sandbox-fields">
+            <label><span data-i18n="left">Lệch trái (m, âm = phải)</span><input name="left" type="number" step="0.05" min="-3.05" max="3.05" value="1"></label>
+            <label><span data-i18n="fromNet">Cách lưới (m)</span><input name="fromNet" type="number" step="0.1" min="0.1" max="6.7" value="5.5"></label>
+            <label><span data-i18n="height">Độ cao tiếp cầu (m)</span><input name="height" type="number" step="0.05" min="0.05" max="3.5" value="2"></label>
+          </div>
+        </div>
+        <h3 class="shot-section" data-i18n="hitTitle">CÚ ĐÁNH CỦA A</h3>
+        <h3 class="shot-section" data-i18n="powerTitle">TỐC ĐỘ CẦU RỜI VỢT</h3>
+        <div id="presets" class="stroke-filter"></div>
+        <label class="slider"><span><b data-i18n="speed">Tốc độ</b><output id="speed-out"></output></span><input name="speed" type="range" min="5" max="100" step="0.5" value="34.5"></label>
+        <h3 class="shot-section" data-i18n="faceTitle">MẶT VỢT</h3>
+        <label class="slider"><span><b data-i18n="tilt">Độ nghiêng</b><output id="tilt-out"></output></span><input name="tilt" type="range" min="-60" max="80" step="0.5" value="-4"></label>
+        <label class="slider"><span><b data-i18n="direction">Hướng đánh</b><output id="direction-out"></output></span><input name="direction" type="range" min="-45" max="45" step="0.5" value="0"></label>
+        <svg id="face-diagram" class="face-diagram" viewBox="-70 -55 140 80" role="img"></svg>
+        <div id="result" class="shot-result" aria-live="polite"></div>
+        <h3 class="shot-section" data-i18n="playersTitle">NGƯỜI CHƠI</h3>
+        <fieldset class="player-card" data-player="A">
+          <legend><span data-i18n="playerA">NGƯỜI CHƠI A</span><label class="check"><input name="A-show" type="checkbox" checked><span data-i18n="show">Hiện</span></label></legend>
+          <div class="sandbox-fields">
+            <label><span data-i18n="sex">Giới tính</span><select name="A-sex"><option value="male" data-i18n="male">Nam</option><option value="female" data-i18n="female">Nữ</option></select></label>
+            <label><span data-i18n="level">Thể lực bật nhảy</span><select name="A-level"><option value="weak" data-i18n="weak">Yếu</option><option value="average" selected data-i18n="average">Trung bình</option><option value="good" data-i18n="good">Khá</option></select></label>
+            <label><span data-i18n="bodyHeight">Chiều cao (m)</span><input name="A-height" type="number" step="0.01" min="1" max="2.3" value="1.70"></label>
+            <label><span data-i18n="mass">Cân nặng (kg)</span><input name="A-mass" type="number" step="0.5" min="25" max="200" value="65"></label>
+            <label><span data-i18n="jumpInput">Bật nhảy (cm, trống = ước lượng)</span><input name="A-jump" type="number" step="1" min="0" max="120"></label>
+            <label class="incoming-only"><span data-i18n="standLeft">Đứng: lệch trái (m)</span><input name="A-left" type="number" step="any" min="-3.05" max="3.05" value="0.8"></label>
+            <label class="incoming-only"><span data-i18n="standFromNet">Đứng: cách lưới (m)</span><input name="A-fromNet" type="number" step="any" min="0.1" max="7.5" value="5.3"></label>
+          </div>
+          <p id="reach-A" class="sandbox-readout"></p>
+        </fieldset>
+        <fieldset class="player-card" data-player="B">
+          <legend><span data-i18n="playerB">NGƯỜI CHƠI B</span><label class="check"><input name="B-show" type="checkbox" checked><span data-i18n="show">Hiện</span></label></legend>
+          <div class="sandbox-fields">
+            <label><span data-i18n="sex">Giới tính</span><select name="B-sex"><option value="male" data-i18n="male">Nam</option><option value="female" data-i18n="female">Nữ</option></select></label>
+            <label><span data-i18n="level">Thể lực bật nhảy</span><select name="B-level"><option value="weak" data-i18n="weak">Yếu</option><option value="average" selected data-i18n="average">Trung bình</option><option value="good" data-i18n="good">Khá</option></select></label>
+            <label><span data-i18n="bodyHeight">Chiều cao (m)</span><input name="B-height" type="number" step="0.01" min="1" max="2.3" value="1.70"></label>
+            <label><span data-i18n="mass">Cân nặng (kg)</span><input name="B-mass" type="number" step="0.5" min="25" max="200" value="60"></label>
+            <label><span data-i18n="jumpInput">Bật nhảy (cm, trống = ước lượng)</span><input name="B-jump" type="number" step="1" min="0" max="120"></label>
+            <label><span data-i18n="left">Lệch trái (m, âm = phải)</span><input name="B-left" type="number" step="0.05" min="-3.05" max="3.05" value="0"></label>
+            <label><span data-i18n="fromNet">Cách lưới (m)</span><input name="B-fromNet" type="number" step="0.1" min="0.1" max="6.7" value="5.5"></label>
+          </div>
+          <p id="reach-B" class="sandbox-readout"></p>
+        </fieldset>
+      </form>
+      <div class="sandbox">
+        <h3 data-i18n="cornersTitle">6 GÓC SÂN · CẦN MẶT VỢT THẾ NÀO</h3>
+        <ul id="corners" class="corner-list"></ul>
+        <p class="sandbox-note" data-i18n="note">Cầu bay theo pháp tuyến mặt vợt khi tiếp đúng tâm (McErlain-Naylor 2020). Lực cản không khí theo Cohen 2015. Tốc độ người mới / có tập luyện: Zhang 2016 (đập cầu đứng). Mô hình vật lý, không phải lời khuyên kỹ thuật.</p>
+      </div>
+    </aside>
+  </main>
+</body>
+</html>

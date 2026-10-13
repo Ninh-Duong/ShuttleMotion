@@ -70,7 +70,10 @@
       "exampleOrigin": "project-authored",
       "title": "Service action",
       "summary": "Do not unduly delay. Release the shuttle without adding spin; hit its base first while the whole shuttle is below 1.15 m at racket contact. Continue the racket’s forward movement and do not miss the shuttle. The shuttle must travel upward over the net toward the diagonal receiving court. The receiver must be ready; an attempted return shows readiness. Partners must not obscure the server or receiver.",
-      "example": "Serving below the height limit does not excuse adding spin when releasing the shuttle."
+      "example": "Serving below the height limit does not excuse adding spin when releasing the shuttle.",
+      "limits": {
+        "maxShuttleHeightAtContactM": 1.15
+      }
     },
     {
       "id": "singles",

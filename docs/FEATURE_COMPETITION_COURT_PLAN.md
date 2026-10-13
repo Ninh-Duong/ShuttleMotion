@@ -1,13 +1,13 @@
 # Feature plan: Competition-standard badminton court in 2D and 3D
 
-**Status:** Reference JSON, SVG, and data unit tests exist in `reference/badminton/`. The 2D/3D viewer has not been implemented.
+**Status:** Reference JSON, SVG, and data unit tests exist in `reference/badminton/`. The responsive bilingual 2D/3D court viewer is implemented on the homepage.
 **Rule reference:** Standard indoor badminton under BWF Laws of Badminton, Section 4.1, Law 1 and Diagram A. Confirm the effective version before release.
 
 ## Goal
 
 Show the same standard court in 2D and 3D without changing any dimensions or line positions when switching views. Allow a singles/doubles selection that highlights the relevant boundaries.
 
-Dimensions come from [BWF Statutes, Section 4.1 — Laws of Badminton, version effective 26 April 2025](https://www.badminton.no/contentassets/c0b5fd676d9a4a10bd7a14c673a7bad0/section-4.1---laws-of-badminton---26-april-2025-v5.0-1--1.pdf). Check the [BWF Statutes portal](https://corporate.bwfbadminton.com/statutes/) for a newer version. The latest effective version has not been confirmed.
+Dimensions come from [BWF Statutes, Section 4.1 — Laws of Badminton, version 5.0 (1), effective 26 April 2025](https://www.badminton.no/contentassets/c0b5fd676d9a4a10bd7a14c673a7bad0/section-4.1---laws-of-badminton---26-april-2025-v5.0-1--1.pdf). Check the [BWF Statutes portal](https://corporate.bwfbadminton.com/statutes/) for a newer version. The latest effective version has not been confirmed.
 
 ## Standard-court scope
 
@@ -32,7 +32,7 @@ The first viewer covers ordinary singles and doubles. Para badminton variants, h
 
 The viewer belongs in `frontend/`. The static standard court needs no backend endpoint. Both renderers must consume the canonical `reference/badminton/court.json` `CourtSpec` in metres and must not duplicate dimension constants. Pure coordinate transforms map that specification into 2D screen and 3D world coordinates.
 
-The initial HTML + Node foundation does not select a 3D library. Record that choice in `docs/ARCHITECTURE.md` before adding the 3D viewer.
+The implementation uses locally served Three.js with an import map and its OrbitControls addon. It keeps the HTML + Node foundation without a build tool. UI labels are Vietnamese by default with an English switch; all reference data remains English.
 
 ## Unit tests and completion
 

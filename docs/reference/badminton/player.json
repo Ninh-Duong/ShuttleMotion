@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "unit": "fractions of body height unless stated; metres",
+  "scope": "Geometry for placing a simple player figure so the racket meets a given contact point. It shows reach and jump height only and carries no technique guidance.",
+  "segments": {
+    "reference": {
+      "sourceId": "drillis-contini-1966",
+      "note": "Segment lengths as fractions of body height H."
+    },
+    "shoulderHeight": 0.818,
+    "shoulderWidth": 0.259,
+    "upperArm": 0.186,
+    "forearm": 0.146,
+    "hand": 0.108
+  },
+  "racket": {
+    "reference": {
+      "sourceId": "bwf-2025-v5-0-1",
+      "clauses": [
+        "4"
+      ],
+      "note": "Maximum overall frame length and strung-area length and width. These Law 4 limits have not been re-read against the pinned PDF in this project; verify before relying on them."
+    },
+    "overallLengthMm": 680,
+    "stringAreaLengthMm": 280,
+    "stringAreaWidthMm": 220
+  },
+  "jump": {
+    "reference": {
+      "sourceId": "king-2020-applsci",
+      "note": "Forehand jump smash, 18 regional to international male players."
+    },
+    "meanCm": 31.6,
+    "sdCm": 9.2,
+    "eliteExample": {
+      "sourceId": "cohen-2015-njp",
+      "metres": 0.7,
+      "note": "Reachable height = player height + jump + racket length; Lin Dan example 1.78 + 0.7 + 0.65 m."
+    }
+  },
+  "interception": {
+    "reference": {
+      "sourceId": "bwf-shuttle-time-lesson-plans-2017",
+      "note": "\"The interception point when smashing must be in front of the body.\""
+    }
+  },
+  "jumpModel": {
+    "note": "Estimate countermovement jump height from sex, height, body mass and a self-rated level. Steps: (1) level -> cohort percentile jump at the cohort reference body; (2) convert to peak power with the Sayers equation; (3) scale power by fat-free mass, estimated from BMI with the Deurenberg equation at the cohort age (project assumption: power per kg fat-free mass is constant within a level); (4) convert back to jump height at the user body mass.",
+    "norms": {
+      "reference": {
+        "sourceId": "pmc12408081-2025-ijes",
+        "note": "Force-plate CMJ, hands on hips, best of two; US military officers aged 37 +/- 5. Fitter and older than typical learners, so treat as indicative."
+      },
+      "male": {
+        "n": 216,
+        "heightM": 1.78,
+        "massKg": 87.7,
+        "ageY": 37,
+        "percentilesCm": {
+          "weak": 37.34,
+          "average": 41.15,
+          "good": 45.21
+        }
+      },
+      "female": {
+        "n": 83,
+        "heightM": 1.636,
+        "massKg": 72.5,
+        "ageY": 37,
+        "percentilesCm": {
+          "weak": 26.29,
+          "average": 29.72,
+          "good": 33.66
+        }
+      },
+      "levelMapping": {
+        "weak": "P25",
+        "average": "P50",
+        "good": "P75"
+      }
+    },
+    "sayers": {
+      "reference": {
+        "sourceId": "sayers-1999-msse",
+        "note": "Squat-jump equation fitted on 108 college-age men and women; SEE about 373 W."
+      },
+      "perCmJump": 60.7,
+      "perKgMass": 45.3,
+      "constant": -2055
+    },
+    "bodyFat": {
+      "reference": {
+        "sourceId": "deurenberg-1991-bjn",
+        "note": "Body fat % = 1.2 BMI + 0.23 age - 10.8 sex - 5.4 (sex: 1 male, 0 female)."
+      },
+      "perBmi": 1.2,
+      "perYear": 0.23,
+      "male": -10.8,
+      "constant": -5.4
+    },
+    "minimumCm": 5
+  },
+  "defaultProfile": {
+    "sex": "male",
+    "heightM": 1.75,
+    "massKg": 68,
+    "level": "average"
+  },
+  "defaultHeightM": 1.75,
+  "overhead": {
+    "projectAssumption": true,
+    "minArmElevationDeg": 45,
+    "note": "An incoming shuttle counts as hittable overhead only if the straight arm points at least this far above horizontal at contact. Not from a source; a coach should confirm or change it."
+  },
+  "openQuestions": [
+    "Typical body height and jump height of the target learners.",
+    "Where the coach wants the body relative to the contact point for each stroke (the figure only uses straight-arm reach).",
+    "Jump norms for the target learners (the cohort used is older, fitter military officers); whether to scale the estimate down for untrained youth.",
+    "How the coach wants weak / average / good to map onto measured jumps.",
+    "Minimum arm elevation for an overhead contact (the shot lab assumes 45 degrees above horizontal)."
+  ],
+  "sources": [
+    {
+      "id": "drillis-contini-1966",
+      "publisher": "New York University, Office of Vocational Rehabilitation",
+      "title": "Drillis R, Contini R. Body segment parameters. Technical Report 1166-03 (1966), as tabulated in Winter DA, Biomechanics and Motor Control of Human Movement, 4th ed. (2009), Figure 4.1",
+      "url": "https://doi.org/10.1002/9780470549148",
+      "checkedDate": "2026-10-13",
+      "usedSections": [
+        "Segment length ratios: shoulder height, shoulder width, upper arm, forearm, hand"
+      ],
+      "verification": "Ratios from the widely reproduced Winter (2009) figure; the original report was not re-read in this project."
+    },
+    {
+      "id": "king-2020-applsci",
+      "publisher": "Applied Sciences",
+      "title": "King M, Towler H, Dillon R, McErlain-Naylor S. A correlational analysis of shuttlecock speed kinematic determinants in the badminton jump smash. Appl. Sci. 10(4):1248 (2020)",
+      "url": "https://doi.org/10.3390/app10041248",
+      "checkedDate": "2026-10-13",
+      "usedSections": [
+        "Jump height 31.6 ± 9.2 cm"
+      ],
+      "verification": "Read the open-access full text."
+    },
+    {
+      "id": "bwf-shuttle-time-lesson-plans-2017",
+      "publisher": "Badminton World Federation (BWF)",
+      "title": "BWF Shuttle Time, Schools Badminton Lesson Plans (2017)",
+      "url": "https://media.specialolympics.org/resources/sports-essentials/developmental-sports/Developmental-Sports-Shuttle-Time-Lesson-Plans-English.pdf",
+      "checkedDate": "2026-10-12",
+      "usedSections": [
+        "Smash: interception point in front of the body"
+      ],
+      "verification": "Read a hosted copy of the BWF document."
+    },
+    {
+      "id": "pmc12408081-2025-ijes",
+      "publisher": "International Journal of Exercise Science",
+      "title": "Comprehensive fitness assessment in a professional military education cohort: a cross-sectional study. Int. J. Exerc. Sci. 18(8):811-835 (2025)",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12408081/",
+      "checkedDate": "2026-10-13",
+      "usedSections": [
+        "CMJ height percentiles by sex (P25, P50, P75) and cohort body size"
+      ],
+      "verification": "Read the open-access full text."
+    },
+    {
+      "id": "sayers-1999-msse",
+      "publisher": "Medicine & Science in Sports & Exercise",
+      "title": "Sayers SP, Harackiewicz DV, Harman EA, Frykman PN, Rosenstein MT. Cross-validation of three jump power equations. Med. Sci. Sports Exerc. 31(4):572-577 (1999)",
+      "url": "https://doi.org/10.1097/00005768-199904000-00013",
+      "checkedDate": "2026-10-13",
+      "usedSections": [
+        "Peak power (W) = 60.7 x jump (cm) + 45.3 x mass (kg) - 2055"
+      ],
+      "verification": "Read the author text copy."
+    },
+    {
+      "id": "deurenberg-1991-bjn",
+      "publisher": "British Journal of Nutrition",
+      "title": "Deurenberg P, Weststrate JA, Seidell JC. Body mass index as a measure of body fatness: age- and sex-specific prediction formulas. Br. J. Nutr. 65:105-114 (1991)",
+      "url": "https://doi.org/10.1079/BJN19910073",
+      "checkedDate": "2026-10-13",
+      "usedSections": [
+        "Adult body fat % from BMI, age and sex"
+      ],
+      "verification": "Widely reproduced equation; the original paper was not re-read in this project."
+    }
+  ]
+}

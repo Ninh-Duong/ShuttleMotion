@@ -1,0 +1,1703 @@
+{
+  "schemaVersion": 1,
+  "categories": [
+    "serve-receive",
+    "attack",
+    "defence",
+    "rotation-mixed"
+  ],
+  "notes": {
+    "status": "All lessons are drafts derived from the cited BWF pages and are awaiting coach review.",
+    "positions": "Court positions are a project interpretation of the qualitative source descriptions (for example 'close to the T', 'centrally in the midcourt'); the sources give no distances in metres.",
+    "sequence": "Each rally sequence is chosen to illustrate the cited roles; the sources describe roles and options, not fixed rallies.",
+    "translation": "English captions paraphrase the cited page and quotes are verbatim. Vietnamese captions are project translations."
+  },
+  "sources": [
+    {
+      "id": "bwf-coach-manual-l1-2017",
+      "title": "BWF Coach Education, Coaches' Manual Level 1, 2nd edition (2017), Module 8: Ch.08 Doubles Tactics (pp.148-169), Ch.09 Mixed Doubles Tactics (pp.170-180)",
+      "url": "https://badminton.lv/faili/bwf_coach_education_coaches_manual_l1-2nd-edition-midres.pdf",
+      "verification": "Full text read from a mirrored copy; the official copy at bwfeducation.com requires sign-in."
+    },
+    {
+      "id": "bwf-shuttle-time-lesson-plans-2017",
+      "title": "BWF Shuttle Time, Schools Badminton Lesson Plans (2017), Lessons 21-22 (pp.95-102)",
+      "url": "https://media.specialolympics.org/resources/sports-essentials/developmental-sports/Developmental-Sports-Shuttle-Time-Lesson-Plans-English.pdf",
+      "verification": "Full text read from a hosted copy of the BWF document."
+    },
+    {
+      "id": "zhang-2016-jhk",
+      "title": "Zhang Z et al. J. Hum. Kinet. 53:9-22 (2016), Table 1",
+      "url": "https://doi.org/10.1515/hukin-2016-0006",
+      "verification": "Full text read."
+    },
+    {
+      "id": "chen-2009-jssm",
+      "title": "Chen LM, Pan YH, Chen YJ. J. Sports Sci. Med. 8:657-662 (2009), citing Tsai et al. 1997",
+      "url": "https://jssm.org/jssm-08-657.xml",
+      "verification": "Full text read; elite speeds cited secondarily."
+    },
+    {
+      "id": "downey-1984",
+      "title": "Downey J. Winning Badminton Doubles. A. & C. Black (1984), ISBN 9780713626551",
+      "url": "https://worldbadminton.com/books/documents/WinningBadmintonDoubles.pdf",
+      "status": "notUsedYet",
+      "verification": "Not read (file too large to fetch) and no licence statement found; recorded for future lessons only."
+    }
+  ],
+  "speeds": {
+    "smash": {
+      "speed": 45.31,
+      "sourceId": "zhang-2016-jhk",
+      "note": "Trained players, standing forehand smash."
+    },
+    "clear": {
+      "speed": 47.76,
+      "sourceId": "chen-2009-jssm",
+      "note": "Elite players."
+    },
+    "drop": {
+      "speed": 18,
+      "status": "illustrative",
+      "note": "Elite drops measured 22-29 m/s (chen-2009-jssm); the point-mass model needs a slightly lower speed for a falling drop from these contact points."
+    },
+    "lowServe": {
+      "speed": 9,
+      "status": "illustrative"
+    },
+    "flickServe": {
+      "speed": 22,
+      "status": "illustrative"
+    },
+    "lift": {
+      "speed": 22,
+      "status": "illustrative"
+    },
+    "block": {
+      "speed": 9,
+      "status": "illustrative"
+    },
+    "net": {
+      "speed": 3,
+      "status": "illustrative"
+    }
+  },
+  "lessons": [
+    {
+      "id": "low-serve-net-battle",
+      "category": "serve-receive",
+      "status": "draft-source-derived",
+      "title": {
+        "en": "Low serve to the centre and the net battle",
+        "vi": "Giao cầu thấp vào giữa và tranh chấp lưới"
+      },
+      "objective": {
+        "en": "See where the server, the server's partner and the receiver stand, and who covers which replies after a low serve.",
+        "vi": "Thấy vị trí người giao, đồng đội người giao và người nhận, và ai lo những cú trả nào sau quả giao thấp."
+      },
+      "sources": [
+        {
+          "sourceId": "bwf-coach-manual-l1-2017",
+          "pages": "148-153, 159-164"
+        }
+      ],
+      "players": {
+        "A1": {
+          "team": "A",
+          "role": {
+            "en": "Server",
+            "vi": "Người giao"
+          }
+        },
+        "A2": {
+          "team": "A",
+          "role": {
+            "en": "Server's partner",
+            "vi": "Đồng đội người giao"
+          }
+        },
+        "B1": {
+          "team": "B",
+          "role": {
+            "en": "Receiver",
+            "vi": "Người nhận"
+          }
+        },
+        "B2": {
+          "team": "B",
+          "role": {
+            "en": "Receiver's partner",
+            "vi": "Đồng đội người nhận"
+          }
+        }
+      },
+      "steps": [
+        {
+          "positions": {
+            "A1": {
+              "left": -0.4,
+              "fromNet": 2.6
+            },
+            "A2": {
+              "left": 0,
+              "fromNet": 4
+            },
+            "B1": {
+              "left": -0.5,
+              "fromNet": 2.4
+            },
+            "B2": {
+              "left": 0.3,
+              "fromNet": 4.4
+            }
+          },
+          "shot": {
+            "by": "A1",
+            "type": "lowServe",
+            "to": {
+              "left": -0.2,
+              "fromNet": 2.15
+            },
+            "arc": "flat",
+            "contactHeight": 1.05
+          },
+          "caption": {
+            "en": "The server serves from close to the T with the partner central in the midcourt; low serves usually go to the centre to cut down the angles of return.",
+            "vi": "Người giao đứng gần chữ T, đồng đội đứng giữa sân; cầu giao thấp thường vào giữa để thu hẹp góc trả cầu."
+          },
+          "quote": {
+            "text": "the server delivers from close to the 'T' on the court, with her partner stood centrally in the midcourt",
+            "pages": "159-164"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.3,
+              "fromNet": 2
+            },
+            "A2": {
+              "left": 0,
+              "fromNet": 4
+            },
+            "B1": {
+              "left": -0.3,
+              "fromNet": 1
+            },
+            "B2": {
+              "left": 0.3,
+              "fromNet": 4.4
+            }
+          },
+          "shot": {
+            "by": "B1",
+            "type": "net",
+            "to": {
+              "left": -0.5,
+              "fromNet": 1.1
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "The receiver moves in to dominate the net with a net reply.",
+            "vi": "Người nhận lao lên làm chủ lưới bằng một cú bỏ nhỏ trả lưới."
+          },
+          "quote": {
+            "text": "should seek to dominate the net and kill any further net shots from the server",
+            "pages": "148-153, 159-164"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.5,
+              "fromNet": 1.5
+            },
+            "A2": {
+              "left": 0,
+              "fromNet": 4
+            },
+            "B1": {
+              "left": -0.3,
+              "fromNet": 1
+            },
+            "B2": {
+              "left": 0.3,
+              "fromNet": 4.4
+            }
+          },
+          "receivedBy": "A1",
+          "caption": {
+            "en": "After the low serve the server covers net replies; the partner covers returns to the mid- and rearcourt.",
+            "vi": "Sau quả giao thấp, người giao lo các cú trả lưới; đồng đội lo các cú trả về giữa và cuối sân."
+          },
+          "quote": {
+            "text": "The server's partner is responsible for covering returns to mid- and rearcourt.",
+            "pages": "148-153, 159-164"
+          }
+        }
+      ]
+    },
+    {
+      "id": "flick-serve-reply",
+      "category": "serve-receive",
+      "status": "draft-source-derived",
+      "title": {
+        "en": "Flick serve and the receiver's smash",
+        "vi": "Giao cầu bổng (flick) và cú đập của người nhận"
+      },
+      "objective": {
+        "en": "See the receiver attack a wide flick serve and the serving pair defend side by side.",
+        "vi": "Thấy người nhận tấn công quả giao bổng ra biên và cặp giao cầu phòng thủ song song."
+      },
+      "sources": [
+        {
+          "sourceId": "bwf-coach-manual-l1-2017",
+          "pages": "148-153, 159-164"
+        }
+      ],
+      "players": {
+        "A1": {
+          "team": "A",
+          "role": {
+            "en": "Server",
+            "vi": "Người giao"
+          }
+        },
+        "A2": {
+          "team": "A",
+          "role": {
+            "en": "Server's partner",
+            "vi": "Đồng đội người giao"
+          }
+        },
+        "B1": {
+          "team": "B",
+          "role": {
+            "en": "Receiver",
+            "vi": "Người nhận"
+          }
+        },
+        "B2": {
+          "team": "B",
+          "role": {
+            "en": "Receiver's partner",
+            "vi": "Đồng đội người nhận"
+          }
+        }
+      },
+      "steps": [
+        {
+          "positions": {
+            "A1": {
+              "left": -0.4,
+              "fromNet": 2.6
+            },
+            "A2": {
+              "left": 0,
+              "fromNet": 4
+            },
+            "B1": {
+              "left": -0.5,
+              "fromNet": 2.4
+            },
+            "B2": {
+              "left": 0.3,
+              "fromNet": 4.4
+            }
+          },
+          "shot": {
+            "by": "A1",
+            "type": "flickServe",
+            "to": {
+              "left": -1.6,
+              "fromNet": 5.6
+            },
+            "arc": "high",
+            "contactHeight": 1.05
+          },
+          "caption": {
+            "en": "A wide flick serve to the back of the service court; it often draws a predictable straight reply.",
+            "vi": "Giao bổng ra biên về cuối ô giao; quả này thường khiến đối phương trả thẳng, dễ đoán."
+          },
+          "quote": {
+            "text": "Wide flick serves often draw a predictable straight reply, which can be anticipated by the server's partner.",
+            "pages": "148-153, 159-164"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -1,
+              "fromNet": 3.3
+            },
+            "A2": {
+              "left": 1,
+              "fromNet": 3.6
+            },
+            "B1": {
+              "left": -1.6,
+              "fromNet": 5.2
+            },
+            "B2": {
+              "left": 0.2,
+              "fromNet": 2.6
+            }
+          },
+          "shot": {
+            "by": "B1",
+            "type": "smash",
+            "to": {
+              "left": 0,
+              "fromNet": 5
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "On balance from a wide flick, the receiver smashes at the straight player or between the two players while the serving pair go side by side.",
+            "vi": "Khi vững người sau quả giao bổng ra biên, người nhận đập vào người đứng thẳng hướng hoặc vào giữa hai người; cặp giao cầu chuyển sang đứng song song."
+          },
+          "quote": {
+            "text": "smash at the straight player or between the two players",
+            "pages": "148-153, 159-164"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -1,
+              "fromNet": 3.3
+            },
+            "A2": {
+              "left": 0.9,
+              "fromNet": 3.6
+            },
+            "B1": {
+              "left": -1.2,
+              "fromNet": 4.4
+            },
+            "B2": {
+              "left": 0.2,
+              "fromNet": 2.4
+            }
+          },
+          "receivedBy": "A2",
+          "caption": {
+            "en": "The smash between the two defenders is taken by the player covering the middle.",
+            "vi": "Cú đập vào giữa hai người được người đang che khu giữa đỡ."
+          },
+          "quote": {
+            "text": "both use front and back as their attacking formation and side by side as their defensive formation",
+            "pages": "148"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lift-smash-block",
+      "category": "attack",
+      "status": "draft-source-derived",
+      "title": {
+        "en": "Lift, smash, block: formations change",
+        "vi": "Lốp – đập – chặn: đổi đội hình"
+      },
+      "objective": {
+        "en": "Follow the Shuttle Time doubles exercise and watch both pairs switch between attack and defence formations.",
+        "vi": "Theo bài tập đánh đôi của Shuttle Time và xem hai cặp đổi qua lại giữa đội hình tấn công và phòng thủ."
+      },
+      "sources": [
+        {
+          "sourceId": "bwf-shuttle-time-lesson-plans-2017",
+          "pages": "95-102"
+        },
+        {
+          "sourceId": "bwf-coach-manual-l1-2017",
+          "pages": "148"
+        }
+      ],
+      "players": {
+        "A1": {
+          "team": "A",
+          "role": {
+            "en": "Server",
+            "vi": "Người giao"
+          }
+        },
+        "A2": {
+          "team": "A",
+          "role": {
+            "en": "Server's partner",
+            "vi": "Đồng đội người giao"
+          }
+        },
+        "B1": {
+          "team": "B",
+          "role": {
+            "en": "Receiver",
+            "vi": "Người nhận"
+          }
+        },
+        "B2": {
+          "team": "B",
+          "role": {
+            "en": "Receiver's partner",
+            "vi": "Đồng đội người nhận"
+          }
+        }
+      },
+      "steps": [
+        {
+          "positions": {
+            "A1": {
+              "left": -0.4,
+              "fromNet": 2.6
+            },
+            "A2": {
+              "left": 0,
+              "fromNet": 4
+            },
+            "B1": {
+              "left": -0.5,
+              "fromNet": 2.4
+            },
+            "B2": {
+              "left": 0.3,
+              "fromNet": 4.4
+            }
+          },
+          "shot": {
+            "by": "A1",
+            "type": "lowServe",
+            "to": {
+              "left": -0.2,
+              "fromNet": 2.15
+            },
+            "arc": "flat",
+            "contactHeight": 1.05
+          },
+          "caption": {
+            "en": "The exercise starts with a backhand low service.",
+            "vi": "Bài tập bắt đầu bằng quả giao thấp trái tay."
+          },
+          "quote": {
+            "text": "backhand low service",
+            "pages": "95-102"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.4,
+              "fromNet": 2
+            },
+            "A2": {
+              "left": 0,
+              "fromNet": 4
+            },
+            "B1": {
+              "left": -0.3,
+              "fromNet": 2
+            },
+            "B2": {
+              "left": 0.3,
+              "fromNet": 4.4
+            }
+          },
+          "shot": {
+            "by": "B1",
+            "type": "lift",
+            "to": {
+              "left": -0.8,
+              "fromNet": 5.6
+            },
+            "arc": "high"
+          },
+          "caption": {
+            "en": "The return is a lift to the rearcourt.",
+            "vi": "Cú trả giao là một quả lốp về cuối sân."
+          },
+          "quote": {
+            "text": "The return is a lift",
+            "pages": "95-102"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.2,
+              "fromNet": 1.5
+            },
+            "A2": {
+              "left": -0.8,
+              "fromNet": 5.3
+            },
+            "B1": {
+              "left": -0.8,
+              "fromNet": 3.4
+            },
+            "B2": {
+              "left": 1,
+              "fromNet": 3.4
+            }
+          },
+          "shot": {
+            "by": "A2",
+            "type": "smash",
+            "to": {
+              "left": -0.6,
+              "fromNet": 3.9
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "The server takes the net position and the partner smashes: front and back to attack. The opponents defend side by side.",
+            "vi": "Người giao lên lưới, đồng đội đập cầu: đội hình trước – sau để tấn công. Đối phương phòng thủ song song."
+          },
+          "quote": {
+            "text": "server takes net position, partner smashes, opponents adopt defensive position and use block defence",
+            "pages": "95-102"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.2,
+              "fromNet": 1.5
+            },
+            "A2": {
+              "left": -0.7,
+              "fromNet": 4.6
+            },
+            "B1": {
+              "left": -0.8,
+              "fromNet": 3.5
+            },
+            "B2": {
+              "left": 1,
+              "fromNet": 3.4
+            }
+          },
+          "shot": {
+            "by": "B1",
+            "type": "block",
+            "to": {
+              "left": 0.5,
+              "fromNet": 1
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "The defender uses block defence back to the net.",
+            "vi": "Người phòng thủ chặn cầu trả về lưới."
+          },
+          "quote": {
+            "text": "use block defence",
+            "pages": "95-102"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": 0.4,
+              "fromNet": 1.2
+            },
+            "A2": {
+              "left": -0.5,
+              "fromNet": 4.2
+            },
+            "B1": {
+              "left": -0.8,
+              "fromNet": 3
+            },
+            "B2": {
+              "left": 0.8,
+              "fromNet": 3.4
+            }
+          },
+          "shot": {
+            "by": "A1",
+            "type": "lift",
+            "to": {
+              "left": 0.6,
+              "fromNet": 5.6
+            },
+            "arc": "high"
+          },
+          "caption": {
+            "en": "The net player lifts and the formations change: the lifting pair now defends side by side and the other pair attacks front and back.",
+            "vi": "Người ở lưới lốp cầu và hai cặp đổi đội hình: cặp vừa lốp chuyển sang phòng thủ song song, cặp kia tấn công trước – sau."
+          },
+          "quote": {
+            "text": "Net player lifts and formations change (lift-smash-block).",
+            "pages": "95-102"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.9,
+              "fromNet": 3.4
+            },
+            "A2": {
+              "left": 0.9,
+              "fromNet": 3.4
+            },
+            "B1": {
+              "left": -0.2,
+              "fromNet": 2
+            },
+            "B2": {
+              "left": 0.6,
+              "fromNet": 5.3
+            }
+          },
+          "receivedBy": "B2",
+          "caption": {
+            "en": "Pair B now attacks front and back; pair A defends side by side.",
+            "vi": "Cặp B giờ tấn công trước – sau; cặp A phòng thủ song song."
+          },
+          "quote": {
+            "text": "both use front and back as their attacking formation and side by side as their defensive formation",
+            "pages": "148",
+            "sourceId": "bwf-coach-manual-l1-2017"
+          }
+        }
+      ]
+    },
+    {
+      "id": "channel-attack",
+      "category": "attack",
+      "status": "draft-source-derived",
+      "title": {
+        "en": "Channel attack and the drop",
+        "vi": "Tấn công theo kênh và cú bỏ nhỏ"
+      },
+      "objective": {
+        "en": "See the front player take the midcourt on the shuttle's side, then move in to the net after the partner's drop.",
+        "vi": "Thấy người phía trước đứng giữa sân cùng phía với cầu, rồi lên lưới sau cú bỏ nhỏ của đồng đội."
+      },
+      "sources": [
+        {
+          "sourceId": "bwf-coach-manual-l1-2017",
+          "pages": "154-157, 165-167"
+        }
+      ],
+      "players": {
+        "A1": {
+          "team": "A",
+          "role": {
+            "en": "Rear attacker",
+            "vi": "Người tấn công phía sau"
+          }
+        },
+        "A2": {
+          "team": "A",
+          "role": {
+            "en": "Front attacker",
+            "vi": "Người tấn công phía trước"
+          }
+        },
+        "B1": {
+          "team": "B",
+          "role": {
+            "en": "Defender",
+            "vi": "Người phòng thủ"
+          }
+        },
+        "B2": {
+          "team": "B",
+          "role": {
+            "en": "Defender",
+            "vi": "Người phòng thủ"
+          }
+        }
+      },
+      "steps": [
+        {
+          "positions": {
+            "A1": {
+              "left": -1,
+              "fromNet": 3.4
+            },
+            "A2": {
+              "left": 1,
+              "fromNet": 3.4
+            },
+            "B1": {
+              "left": 0.8,
+              "fromNet": 1.4
+            },
+            "B2": {
+              "left": -0.3,
+              "fromNet": 4
+            }
+          },
+          "shot": {
+            "by": "B1",
+            "type": "lift",
+            "to": {
+              "left": -0.8,
+              "fromNet": 5.6
+            },
+            "arc": "high",
+            "contactHeight": 0.9
+          },
+          "caption": {
+            "en": "Pair B lifts straight to the rearcourt.",
+            "vi": "Cặp B lốp thẳng về cuối sân."
+          },
+          "quote": {
+            "text": "When the shuttle is lifted to the rearcourt, the front player should take up a midcourt position on the same side of the court as the shuttle.",
+            "pages": "154-157, 165-167"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.8,
+              "fromNet": 5.3
+            },
+            "A2": {
+              "left": -0.7,
+              "fromNet": 2.8
+            },
+            "B1": {
+              "left": 0.9,
+              "fromNet": 3.4
+            },
+            "B2": {
+              "left": -0.9,
+              "fromNet": 3.4
+            }
+          },
+          "shot": {
+            "by": "A1",
+            "type": "drop",
+            "to": {
+              "left": 0.2,
+              "fromNet": 1.6
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "Channel attack: the front player waits in the midcourt on the shuttle's side; the rear player plays a drop between the defenders.",
+            "vi": "Tấn công theo kênh: người phía trước chờ ở giữa sân cùng phía với cầu; người phía sau bỏ nhỏ vào giữa hai người phòng thủ."
+          },
+          "quote": {
+            "text": "most effective when the attack is directed at the straight player or to the middle, as it can create a 2 vs 1 situation",
+            "pages": "154-157, 165-167"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.5,
+              "fromNet": 4.2
+            },
+            "A2": {
+              "left": -0.3,
+              "fromNet": 1.6
+            },
+            "B1": {
+              "left": 0.3,
+              "fromNet": 1.1
+            },
+            "B2": {
+              "left": -0.9,
+              "fromNet": 3.2
+            }
+          },
+          "shot": {
+            "by": "B1",
+            "type": "net",
+            "to": {
+              "left": -0.2,
+              "fromNet": 1.1
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "After the drop, the front player moves in to the net to threaten net replies.",
+            "vi": "Sau cú bỏ nhỏ, người phía trước lên lưới để uy hiếp các cú trả lưới."
+          },
+          "quote": {
+            "text": "the front player should move in to the net to threaten and prevent any attempted net replies",
+            "pages": "154-157, 165-167"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.4,
+              "fromNet": 4
+            },
+            "A2": {
+              "left": -0.2,
+              "fromNet": 1.5
+            },
+            "B1": {
+              "left": 0.3,
+              "fromNet": 1.1
+            },
+            "B2": {
+              "left": -0.9,
+              "fromNet": 3.2
+            }
+          },
+          "receivedBy": "A2",
+          "caption": {
+            "en": "The front player meets the net reply early at the net.",
+            "vi": "Người phía trước đón cú trả lưới sớm ngay tại lưới."
+          },
+          "quote": {
+            "text": "The front player will know a dropshot has been played by the movement of the opposition.",
+            "pages": "154-157, 165-167"
+          }
+        }
+      ]
+    },
+    {
+      "id": "defence-shift-wide-lift",
+      "category": "defence",
+      "status": "draft-source-derived",
+      "title": {
+        "en": "Defending a wide lift: shift together, lift cross-court",
+        "vi": "Phòng thủ sau quả lốp ra biên: cùng dịch người, lốp chéo"
+      },
+      "objective": {
+        "en": "See the defending pair move across to the shuttle's side and answer a straight smash with a cross-court lift.",
+        "vi": "Thấy cặp phòng thủ cùng dịch về phía cầu và trả cú đập thẳng bằng quả lốp chéo sân."
+      },
+      "sources": [
+        {
+          "sourceId": "bwf-coach-manual-l1-2017",
+          "pages": "157-158, 167-169"
+        }
+      ],
+      "players": {
+        "A1": {
+          "team": "A",
+          "role": {
+            "en": "Defender",
+            "vi": "Người phòng thủ"
+          }
+        },
+        "A2": {
+          "team": "A",
+          "role": {
+            "en": "Defender",
+            "vi": "Người phòng thủ"
+          }
+        },
+        "B1": {
+          "team": "B",
+          "role": {
+            "en": "Front attacker",
+            "vi": "Người tấn công phía trước"
+          }
+        },
+        "B2": {
+          "team": "B",
+          "role": {
+            "en": "Rear attacker",
+            "vi": "Người tấn công phía sau"
+          }
+        }
+      },
+      "steps": [
+        {
+          "positions": {
+            "A1": {
+              "left": 0.5,
+              "fromNet": 1.4
+            },
+            "A2": {
+              "left": -0.3,
+              "fromNet": 4
+            },
+            "B1": {
+              "left": 0.2,
+              "fromNet": 2
+            },
+            "B2": {
+              "left": 0,
+              "fromNet": 4.2
+            }
+          },
+          "shot": {
+            "by": "A1",
+            "type": "lift",
+            "to": {
+              "left": -1.9,
+              "fromNet": 5.6
+            },
+            "arc": "high",
+            "contactHeight": 0.9
+          },
+          "caption": {
+            "en": "Pair A lifts wide to the rearcourt corner.",
+            "vi": "Cặp A lốp ra góc cuối sân."
+          },
+          "quote": {
+            "text": "For wider lifts, the pair move across together towards the same side as the shuttle has been lifted",
+            "pages": "157-158, 167-169"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": 0,
+              "fromNet": 3.2
+            },
+            "A2": {
+              "left": 1.6,
+              "fromNet": 3.4
+            },
+            "B1": {
+              "left": -0.3,
+              "fromNet": 2
+            },
+            "B2": {
+              "left": -1.9,
+              "fromNet": 5.2
+            }
+          },
+          "shot": {
+            "by": "B2",
+            "type": "smash",
+            "to": {
+              "left": 1.6,
+              "fromNet": 3.8
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "The defenders have shifted towards the shuttle's side to cover the straight and down-the-middle replies, the most frequent returns. The attacker smashes straight.",
+            "vi": "Hai người phòng thủ đã dịch về phía cầu để che các cú đánh thẳng và vào giữa, những cú trả thường gặp nhất. Người tấn công đập thẳng."
+          },
+          "quote": {
+            "text": "straight or down-the-middle replies… the most frequent returns",
+            "pages": "157-158, 167-169"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": 0,
+              "fromNet": 3.2
+            },
+            "A2": {
+              "left": 1.6,
+              "fromNet": 3.6
+            },
+            "B1": {
+              "left": -0.4,
+              "fromNet": 2
+            },
+            "B2": {
+              "left": -1.6,
+              "fromNet": 4.6
+            }
+          },
+          "shot": {
+            "by": "A2",
+            "type": "lift",
+            "to": {
+              "left": 1.8,
+              "fromNet": 5.6
+            },
+            "arc": "high",
+            "speed": 34
+          },
+          "caption": {
+            "en": "Off a straight smash the defender lifts cross-court, which moves the attackers around more.",
+            "vi": "Trước cú đập thẳng, người phòng thủ lốp chéo sân để bắt đối phương di chuyển nhiều hơn."
+          },
+          "quote": {
+            "text": "cross-court lifts off straight attacking shots; straight lifts off cross-court attacking shots",
+            "pages": "157-158, 167-169"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -1.5,
+              "fromNet": 3.4
+            },
+            "A2": {
+              "left": 0.1,
+              "fromNet": 3.2
+            },
+            "B1": {
+              "left": 0.3,
+              "fromNet": 2
+            },
+            "B2": {
+              "left": 1.6,
+              "fromNet": 5.2
+            }
+          },
+          "receivedBy": "B2",
+          "caption": {
+            "en": "The defending pair moves across together again towards the new side of the shuttle.",
+            "vi": "Cặp phòng thủ lại cùng dịch sang phía mới của cầu."
+          },
+          "quote": {
+            "text": "For wider lifts, the pair move across together towards the same side as the shuttle has been lifted",
+            "pages": "157-158, 167-169"
+          }
+        }
+      ]
+    },
+    {
+      "id": "counter-attack-block",
+      "category": "defence",
+      "status": "draft-source-derived",
+      "title": {
+        "en": "Counter-attack: block into space and move forward",
+        "vi": "Phản công: chặn vào khoảng trống rồi lên lưới"
+      },
+      "objective": {
+        "en": "See a defender block a smash into space, move forward to cover the net and force a lift so the pair can attack.",
+        "vi": "Thấy người phòng thủ chặn cú đập vào khoảng trống, lên che lưới và ép đối phương lốp để cặp mình chuyển sang tấn công."
+      },
+      "sources": [
+        {
+          "sourceId": "bwf-coach-manual-l1-2017",
+          "pages": "157-158, 167-169"
+        }
+      ],
+      "players": {
+        "A1": {
+          "team": "A",
+          "role": {
+            "en": "Defender",
+            "vi": "Người phòng thủ"
+          }
+        },
+        "A2": {
+          "team": "A",
+          "role": {
+            "en": "Defender",
+            "vi": "Người phòng thủ"
+          }
+        },
+        "B1": {
+          "team": "B",
+          "role": {
+            "en": "Front attacker",
+            "vi": "Người tấn công phía trước"
+          }
+        },
+        "B2": {
+          "team": "B",
+          "role": {
+            "en": "Rear attacker",
+            "vi": "Người tấn công phía sau"
+          }
+        }
+      },
+      "steps": [
+        {
+          "positions": {
+            "A1": {
+              "left": 0.3,
+              "fromNet": 1.5
+            },
+            "A2": {
+              "left": -0.3,
+              "fromNet": 4
+            },
+            "B1": {
+              "left": 0.2,
+              "fromNet": 2
+            },
+            "B2": {
+              "left": 0,
+              "fromNet": 4.2
+            }
+          },
+          "shot": {
+            "by": "A1",
+            "type": "lift",
+            "to": {
+              "left": 0.4,
+              "fromNet": 5.6
+            },
+            "arc": "high",
+            "contactHeight": 0.9
+          },
+          "caption": {
+            "en": "Pair A lifts and goes side by side to defend.",
+            "vi": "Cặp A lốp cầu và chuyển sang đứng song song phòng thủ."
+          },
+          "quote": {
+            "text": "both use front and back as their attacking formation and side by side as their defensive formation",
+            "pages": "148"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.9,
+              "fromNet": 3.4
+            },
+            "A2": {
+              "left": 1,
+              "fromNet": 3.4
+            },
+            "B1": {
+              "left": 0,
+              "fromNet": 2
+            },
+            "B2": {
+              "left": 0.4,
+              "fromNet": 5.2
+            }
+          },
+          "shot": {
+            "by": "B2",
+            "type": "smash",
+            "to": {
+              "left": -0.9,
+              "fromNet": 3.8
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "The rear attacker smashes at a defender.",
+            "vi": "Người tấn công phía sau đập vào một người phòng thủ."
+          },
+          "quote": {
+            "text": "smashes, most often at the straight player or to the middle of the two players",
+            "pages": "154-157, 165-167"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.9,
+              "fromNet": 3.5
+            },
+            "A2": {
+              "left": 1,
+              "fromNet": 3.4
+            },
+            "B1": {
+              "left": 0,
+              "fromNet": 2
+            },
+            "B2": {
+              "left": 0.3,
+              "fromNet": 4.4
+            }
+          },
+          "shot": {
+            "by": "A1",
+            "type": "block",
+            "to": {
+              "left": 1.2,
+              "fromNet": 1.4
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "The defender blocks into space away from the front attacker to turn defence into attack.",
+            "vi": "Người phòng thủ chặn cầu vào khoảng trống, xa người tấn công phía trước, để chuyển từ phòng thủ sang tấn công."
+          },
+          "quote": {
+            "text": "use blocks and drives into space in order to turn defence into attack",
+            "pages": "157-158, 167-169"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.8,
+              "fromNet": 2.2
+            },
+            "A2": {
+              "left": 0.6,
+              "fromNet": 4.2
+            },
+            "B1": {
+              "left": 1,
+              "fromNet": 1.3
+            },
+            "B2": {
+              "left": 0.2,
+              "fromNet": 4
+            }
+          },
+          "shot": {
+            "by": "B1",
+            "type": "lift",
+            "to": {
+              "left": 0.5,
+              "fromNet": 5.6
+            },
+            "arc": "high"
+          },
+          "caption": {
+            "en": "The blocking player moves forward to cover the net, which forces a lift.",
+            "vi": "Người vừa chặn tiến lên che lưới, buộc đối phương phải lốp."
+          },
+          "quote": {
+            "text": "The blocking or driving player should aim wherever possible to move forwards to cover the net and force a lift.",
+            "pages": "157-158, 167-169"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.4,
+              "fromNet": 2
+            },
+            "A2": {
+              "left": 0.5,
+              "fromNet": 5.2
+            },
+            "B1": {
+              "left": -0.9,
+              "fromNet": 3.4
+            },
+            "B2": {
+              "left": 0.9,
+              "fromNet": 3.4
+            }
+          },
+          "receivedBy": "A2",
+          "caption": {
+            "en": "Pair A now attacks front and back; pair B defends side by side.",
+            "vi": "Cặp A giờ tấn công trước – sau; cặp B phòng thủ song song."
+          },
+          "quote": {
+            "text": "both use front and back as their attacking formation and side by side as their defensive formation",
+            "pages": "148"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rotation-follow-in",
+      "category": "rotation-mixed",
+      "status": "draft-source-derived",
+      "title": {
+        "en": "Rotation: the rear player follows the drop in",
+        "vi": "Xoay vị trí: người phía sau theo cú bỏ nhỏ lên lưới"
+      },
+      "objective": {
+        "en": "See the rear player follow their own drop to the net while the front player moves to the centre and back, so the pair swap roles.",
+        "vi": "Thấy người phía sau theo cú bỏ nhỏ của mình lên lưới trong khi người phía trước lùi về giữa và phía sau, hai người đổi vai."
+      },
+      "sources": [
+        {
+          "sourceId": "bwf-coach-manual-l1-2017",
+          "pages": "154-157, 165-167"
+        }
+      ],
+      "players": {
+        "A1": {
+          "team": "A",
+          "role": {
+            "en": "Rear attacker",
+            "vi": "Người tấn công phía sau"
+          }
+        },
+        "A2": {
+          "team": "A",
+          "role": {
+            "en": "Front attacker",
+            "vi": "Người tấn công phía trước"
+          }
+        },
+        "B1": {
+          "team": "B",
+          "role": {
+            "en": "Defender",
+            "vi": "Người phòng thủ"
+          }
+        },
+        "B2": {
+          "team": "B",
+          "role": {
+            "en": "Defender",
+            "vi": "Người phòng thủ"
+          }
+        }
+      },
+      "steps": [
+        {
+          "positions": {
+            "A1": {
+              "left": 0.2,
+              "fromNet": 4.6
+            },
+            "A2": {
+              "left": -0.2,
+              "fromNet": 2.2
+            },
+            "B1": {
+              "left": 0.2,
+              "fromNet": 1.6
+            },
+            "B2": {
+              "left": -0.2,
+              "fromNet": 4
+            }
+          },
+          "shot": {
+            "by": "B1",
+            "type": "lift",
+            "to": {
+              "left": 0.4,
+              "fromNet": 5.6
+            },
+            "arc": "high",
+            "contactHeight": 0.9
+          },
+          "caption": {
+            "en": "Pair B lifts; pair A attacks front and back.",
+            "vi": "Cặp B lốp cầu; cặp A tấn công trước – sau."
+          },
+          "quote": {
+            "text": "cover the mid- and rearcourt; be patient, waiting for good attacking opportunities; set up attacking opportunities for the front player",
+            "pages": "154-157, 165-167"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": 0.4,
+              "fromNet": 5.3
+            },
+            "A2": {
+              "left": 0,
+              "fromNet": 2.4
+            },
+            "B1": {
+              "left": -0.9,
+              "fromNet": 3.4
+            },
+            "B2": {
+              "left": 0.9,
+              "fromNet": 3.4
+            }
+          },
+          "shot": {
+            "by": "A1",
+            "type": "drop",
+            "to": {
+              "left": 0,
+              "fromNet": 1.6
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "The rear player plays a steep drop and has a good opportunity to follow it in.",
+            "vi": "Người phía sau bỏ nhỏ dốc và có cơ hội tốt để theo cầu lên lưới."
+          },
+          "quote": {
+            "text": "Players will rotate positions if: there is a good opportunity to follow their own attack positively and the front player has read the situation and commits more centrally to cover other areas of the court.",
+            "pages": "154-157, 165-167"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": 0.2,
+              "fromNet": 2.6
+            },
+            "A2": {
+              "left": -0.8,
+              "fromNet": 3.6
+            },
+            "B1": {
+              "left": -0.3,
+              "fromNet": 1.1
+            },
+            "B2": {
+              "left": 0.9,
+              "fromNet": 3.2
+            }
+          },
+          "shot": {
+            "by": "B1",
+            "type": "net",
+            "to": {
+              "left": -0.2,
+              "fromNet": 1.1
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "As the rear player follows in, the front player moves towards the centre line or the other half to cover the space left behind.",
+            "vi": "Khi người phía sau theo lên, người phía trước di chuyển về đường giữa hoặc sang nửa sân kia để che khoảng trống phía sau."
+          },
+          "quote": {
+            "text": "more to the centre line of the court, or even into the other half court",
+            "pages": "154-157, 165-167"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": -0.1,
+              "fromNet": 1.5
+            },
+            "A2": {
+              "left": -0.6,
+              "fromNet": 4
+            },
+            "B1": {
+              "left": -0.3,
+              "fromNet": 1.1
+            },
+            "B2": {
+              "left": 0.9,
+              "fromNet": 3.2
+            }
+          },
+          "receivedBy": "A1",
+          "caption": {
+            "en": "The pair has rotated: the former rear player is now at the net and the former front player covers the back.",
+            "vi": "Hai người đã xoay vị trí: người trước đây ở sau giờ ở lưới, người trước đây ở trước giờ che phía sau."
+          },
+          "quote": {
+            "text": "cover the mid- and forecourt; take the shuttle early; intercept drives and pushes; hit winners; maintain the attack",
+            "pages": "154-157, 165-167"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mixed-roles",
+      "category": "rotation-mixed",
+      "status": "draft-source-derived",
+      "title": {
+        "en": "Mixed doubles: woman front, man back",
+        "vi": "Đôi nam nữ: nữ phía trước, nam phía sau"
+      },
+      "objective": {
+        "en": "See the mixed-doubles roles: the woman in the forecourt, the man in the rearcourt, and side-by-side defence with the woman cross-court to the shuttle.",
+        "vi": "Thấy vai trò trong đôi nam nữ: nữ ở sân trước, nam ở sân sau, và phòng thủ song song với nữ đứng chéo sân so với cầu."
+      },
+      "sources": [
+        {
+          "sourceId": "bwf-coach-manual-l1-2017",
+          "pages": "170-180"
+        }
+      ],
+      "players": {
+        "A1": {
+          "team": "A",
+          "role": {
+            "en": "Woman",
+            "vi": "Nữ"
+          }
+        },
+        "A2": {
+          "team": "A",
+          "role": {
+            "en": "Man (server)",
+            "vi": "Nam (người giao)"
+          }
+        },
+        "B1": {
+          "team": "B",
+          "role": {
+            "en": "Woman (receiver)",
+            "vi": "Nữ (người nhận)"
+          }
+        },
+        "B2": {
+          "team": "B",
+          "role": {
+            "en": "Man",
+            "vi": "Nam"
+          }
+        }
+      },
+      "steps": [
+        {
+          "positions": {
+            "A1": {
+              "left": 0.4,
+              "fromNet": 1.3
+            },
+            "A2": {
+              "left": -0.4,
+              "fromNet": 2.6
+            },
+            "B1": {
+              "left": -0.5,
+              "fromNet": 2.4
+            },
+            "B2": {
+              "left": 0.1,
+              "fromNet": 4.3
+            }
+          },
+          "shot": {
+            "by": "A2",
+            "type": "lowServe",
+            "to": {
+              "left": -0.2,
+              "fromNet": 2.15
+            },
+            "arc": "flat",
+            "contactHeight": 1.05
+          },
+          "caption": {
+            "en": "The man serves from the right court with the woman at the net, slightly to the left in the forecourt. The receiving man stands centrally.",
+            "vi": "Nam giao từ ô phải, nữ đứng ở lưới hơi lệch trái phía sân trước. Nam bên nhận đứng ở giữa."
+          },
+          "quote": {
+            "text": "slightly to the left in the forecourt",
+            "pages": "170-180"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": 0.3,
+              "fromNet": 1.3
+            },
+            "A2": {
+              "left": -0.3,
+              "fromNet": 2.8
+            },
+            "B1": {
+              "left": -0.3,
+              "fromNet": 2
+            },
+            "B2": {
+              "left": 0.1,
+              "fromNet": 4.3
+            }
+          },
+          "shot": {
+            "by": "B1",
+            "type": "lift",
+            "to": {
+              "left": 0.6,
+              "fromNet": 5.6
+            },
+            "arc": "high"
+          },
+          "caption": {
+            "en": "The receiving woman lifts; the man covers the mid- and rearcourt behind his partner.",
+            "vi": "Nữ bên nhận lốp cầu; nam che giữa và cuối sân phía sau đồng đội."
+          },
+          "quote": {
+            "text": "mid- and rearcourt",
+            "pages": "170-180"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": 0.1,
+              "fromNet": 2
+            },
+            "A2": {
+              "left": 0.6,
+              "fromNet": 5.3
+            },
+            "B1": {
+              "left": 0.9,
+              "fromNet": 3
+            },
+            "B2": {
+              "left": -0.9,
+              "fromNet": 3.4
+            }
+          },
+          "shot": {
+            "by": "A2",
+            "type": "smash",
+            "to": {
+              "left": -0.9,
+              "fromNet": 3.8
+            },
+            "arc": "flat"
+          },
+          "caption": {
+            "en": "Pair A attacks front and back with the man at the back; pair B defends side by side with the woman cross-court to the shuttle. The man smashes at the straight player.",
+            "vi": "Cặp A tấn công trước – sau với nam ở sau; cặp B phòng thủ song song, nữ đứng chéo sân so với cầu. Nam đập vào người đứng thẳng hướng."
+          },
+          "quote": {
+            "text": "side by side, with the woman cross-court to the shuttle",
+            "pages": "170-180"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": 0.1,
+              "fromNet": 2
+            },
+            "A2": {
+              "left": 0.6,
+              "fromNet": 4.6
+            },
+            "B1": {
+              "left": 0.9,
+              "fromNet": 3
+            },
+            "B2": {
+              "left": -0.9,
+              "fromNet": 3.5
+            }
+          },
+          "shot": {
+            "by": "B2",
+            "type": "lift",
+            "to": {
+              "left": 0.9,
+              "fromNet": 5.6
+            },
+            "arc": "high"
+          },
+          "caption": {
+            "en": "In defence, men usually lift straight while women generally lift cross-court.",
+            "vi": "Khi phòng thủ, nam thường lốp thẳng còn nữ thường lốp chéo sân."
+          },
+          "quote": {
+            "text": "usually lift straight",
+            "pages": "170-180"
+          }
+        },
+        {
+          "positions": {
+            "A1": {
+              "left": 0,
+              "fromNet": 2
+            },
+            "A2": {
+              "left": 0.9,
+              "fromNet": 5.2
+            },
+            "B1": {
+              "left": 0.9,
+              "fromNet": 3
+            },
+            "B2": {
+              "left": -0.9,
+              "fromNet": 3.4
+            }
+          },
+          "receivedBy": "A2",
+          "caption": {
+            "en": "The man takes the straight lift at the back and the attack continues.",
+            "vi": "Nam đón quả lốp thẳng ở phía sau và tiếp tục tấn công."
+          },
+          "quote": {
+            "text": "dominate the forecourt and midcourt",
+            "pages": "170-180"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "unit": "SI (m, kg, s)",
+  "scope": "Point-mass shuttle flight with quadratic drag and no lift, spin or wind. A visualization model, not a match or coaching engine.",
+  "specification": {
+    "reference": {
+      "sourceId": "bwf-2025-v5-0-1",
+      "clauses": [
+        "2.2",
+        "2.3",
+        "3"
+      ],
+      "pages": [
+        3
+      ]
+    },
+    "feathers": 16,
+    "featherLengthMm": [
+      62,
+      70
+    ],
+    "tipCircleDiameterMm": [
+      58,
+      68
+    ],
+    "baseDiameterMm": [
+      25,
+      28
+    ],
+    "massG": [
+      4.74,
+      5.5
+    ],
+    "speedTest": "A full underhand stroke from over the back boundary line, upward and parallel to the sidelines, must land 530 mm to 990 mm short of the other back boundary line."
+  },
+  "flight": {
+    "reference": {
+      "sourceId": "cohen-2015-njp",
+      "note": "Equation of motion from clanet-2015-arfm, Eq. 6: m dv/dt = m g - 0.5 rho S Cd |v| v."
+    },
+    "massKg": 0.005,
+    "diameterM": 0.06,
+    "dragCoefficient": 0.65,
+    "airDensity": 1.2,
+    "gravity": 9.81,
+    "expectedTerminalSpeed": 6.7
+  },
+  "orientation": {
+    "reference": {
+      "sourceId": "cohen-2015-njp",
+      "note": "After a hit the shuttle flips in about 20 ms (16-39 ms measured); afterwards the cork leads along the velocity."
+    },
+    "rule": "cork direction = velocity / |velocity|"
+  },
+  "strokes": {
+    "reference": {
+      "sourceId": "chen-2009-jssm",
+      "note": "Speeds: elite players (Tsai et al. 1997, as cited); amateur speeds are unknown."
+    },
+    "zoneReference": {
+      "sourceId": "bwf-coach-manual-l1-2017",
+      "note": "Landing zones and launch direction follow the Module 7 stroke definitions: smash hit downward into the midcourt, clear high to the rearcourt, drop to the forecourt."
+    },
+    "items": [
+      {
+        "id": "smash",
+        "speed": 62.12,
+        "range": [
+          55,
+          70
+        ],
+        "launch": "downward",
+        "zones": [
+          "mid"
+        ]
+      },
+      {
+        "id": "clear",
+        "speed": 47.76,
+        "range": [
+          42,
+          51
+        ],
+        "launch": "upward",
+        "zones": [
+          "rear"
+        ]
+      },
+      {
+        "id": "drop",
+        "speed": 25,
+        "range": [
+          22,
+          29
+        ],
+        "zones": [
+          "front"
+        ]
+      }
+    ]
+  },
+  "contact": {
+    "reference": {
+      "sourceId": "cohen-2015-njp",
+      "note": "\"After contact with the racket (typical time of 1 ms)\"."
+    },
+    "typicalMs": 1
+  },
+  "launchDirection": {
+    "reference": {
+      "sourceId": "mcerlain-naylor-2020-jss",
+      "note": "Shuttle direction is measured from the racket-face normal; off-centre impacts deviate by up to about 3-7 degrees horizontally. The vertical relation to face pitch was not measured."
+    },
+    "rule": "launch direction = racket-face normal (centre impact)"
+  },
+  "presets": {
+    "note": "Mean launch speeds by level. Studies differ in method (video rate, radar, instantaneous fit), so values are indicative.",
+    "items": [
+      {
+        "id": "smash-novice",
+        "stroke": "smash",
+        "level": "novice",
+        "speed": 34.64,
+        "sd": 8.88,
+        "tilt": -3.7,
+        "sourceId": "zhang-2016-jhk",
+        "protocol": "Standing forehand smash, novices with no formal training, n = 10. Tilt is the measured flight angle below horizontal."
+      },
+      {
+        "id": "smash-trained",
+        "stroke": "smash",
+        "level": "trained",
+        "speed": 45.31,
+        "sd": 7.81,
+        "tilt": -14.8,
+        "sourceId": "zhang-2016-jhk",
+        "protocol": "Standing forehand smash, at least 4 years of competitive training, n = 14."
+      },
+      {
+        "id": "smash-elite",
+        "stroke": "smash",
+        "level": "elite",
+        "speed": 62.12,
+        "sourceId": "chen-2009-jssm",
+        "protocol": "Elite players (Tsai et al. 1997, as cited)."
+      },
+      {
+        "id": "clear-elite",
+        "stroke": "clear",
+        "level": "elite",
+        "speed": 47.76,
+        "sourceId": "chen-2009-jssm",
+        "protocol": "Elite players (Tsai et al. 1997, as cited). No non-elite data found."
+      },
+      {
+        "id": "drop-elite",
+        "stroke": "drop",
+        "level": "elite",
+        "speed": 25,
+        "sourceId": "chen-2009-jssm",
+        "protocol": "Elite players (Tsai et al. 1997, as cited). No non-elite data found."
+      }
+    ]
+  },
+  "openQuestions": [
+    "Launch speeds and angles for drive, net shot, push, lift and each serve type.",
+    "Typical speeds for the target learners rather than elite players.",
+    "Spin and slice effects on the flight path.",
+    "When a coach prefers straight or cross-court targets.",
+    "How the incoming shuttle speed changes the return speed of blocks, drives and lifts.",
+    "Launch speeds for defensive returns.",
+    "Non-elite launch speeds for clear, drop, drive, net shot, lift and serves.",
+    "How racket-face pitch relates to the vertical launch angle (only the horizontal relation is measured)."
+  ],
+  "sources": [
+    {
+      "id": "clanet-2015-arfm",
+      "publisher": "Annual Review of Fluid Mechanics",
+      "title": "Clanet C. Sports Ballistics. Annu. Rev. Fluid Mech. 47:455–478 (2015)",
+      "url": "https://yakari.polytechnique.fr/Django-pub/documents/clanet2015rp-1pp.pdf",
+      "checkedDate": "2026-10-12",
+      "usedSections": [
+        "Eq. 6 (equation of motion)",
+        "Eq. 7 (range approximation and worked example)"
+      ],
+      "verification": "Read the author copy. Peer-reviewed; not a BWF document."
+    },
+    {
+      "id": "cohen-2015-njp",
+      "publisher": "New Journal of Physics",
+      "title": "Cohen C, Darbois Texier B, Quere D, Clanet C. The physics of badminton. New J. Phys. 17, 063001 (2015)",
+      "url": "https://iopscience.iop.org/article/10.1088/1367-2630/17/6/063001",
+      "checkedDate": "2026-10-12",
+      "usedSections": [
+        "Shuttle mass, size and drag coefficient (feather 0.65 ± 0.05)",
+        "Shuttle flip time after impact (about 20 ms, 16-39 ms)",
+        "Racket contact time of about 1 ms"
+      ],
+      "verification": "Read the open-access article. Peer-reviewed; not a BWF document."
+    },
+    {
+      "id": "chen-2009-jssm",
+      "publisher": "Journal of Sports Science and Medicine",
+      "title": "Chen LM, Pan YH, Chen YJ. A study of shuttlecock's trajectory in badminton. J. Sports Sci. Med. 8:657–662 (2009)",
+      "url": "https://jssm.org/jssm-08-657.xml",
+      "checkedDate": "2026-10-12",
+      "usedSections": [
+        "Initial speeds for smash, clear and drop, citing Tsai et al. 1997 (elite players)"
+      ],
+      "verification": "Read the open-access article. Speeds are secondary citations of elite players."
+    },
+    {
+      "id": "bwf-coach-manual-l1-2017",
+      "publisher": "Badminton World Federation (BWF)",
+      "title": "BWF Coach Education, Coaches' Manual Level 1, 2nd edition (2017), Module 7",
+      "url": "https://badminton.lv/faili/bwf_coach_education_coaches_manual_l1-2nd-edition-midres.pdf",
+      "checkedDate": "2026-10-12",
+      "usedSections": [
+        "Stroke definitions (smash hit downward)",
+        "Court zones: forecourt, midcourt, rearcourt"
+      ],
+      "verification": "Read a mirrored copy; the official copy at bwfeducation.com requires sign-in."
+    },
+    {
+      "id": "zhang-2016-jhk",
+      "publisher": "Journal of Human Kinetics",
+      "title": "Zhang Z, Li S, Wan B, Visentin P, Jiang Q, Dyck M, Li H, Shan G. The influence of X-factor (trunk rotation) and experience on the quality of the badminton forehand smash. J. Hum. Kinet. 53:9-22 (2016)",
+      "url": "https://doi.org/10.1515/hukin-2016-0006",
+      "checkedDate": "2026-10-13",
+      "usedSections": [
+        "Table 1: shuttle speed and flight angle for novice and skilled standing smashes"
+      ],
+      "verification": "Read the open-access full text."
+    },
+    {
+      "id": "mcerlain-naylor-2020-jss",
+      "publisher": "Journal of Sports Sciences",
+      "title": "McErlain-Naylor SA, Towler H, Afzal IA, Felton PJ, Hiley MJ, King MA. Effect of racket-shuttlecock impact location on shot outcome for badminton smashes by elite players. J. Sports Sci. (2020)",
+      "url": "https://doi.org/10.1080/02640414.2020.1792132",
+      "checkedDate": "2026-10-13",
+      "usedSections": [
+        "Shuttle direction relative to the racket-face normal and impact-location deviation"
+      ],
+      "verification": "Read the author accepted manuscript."
+    }
+  ]
+}

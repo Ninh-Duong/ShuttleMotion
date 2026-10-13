@@ -1,21 +1,83 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ShuttleMotion</title>
+  <meta name="theme-color" content="#10282a">
+  <title>ShuttleMotion · Badminton Court</title>
   <link rel="stylesheet" href="/site.css">
+  <script type="importmap">
+  {"imports":{"three":"/vendor/three.module.js","three/addons/":"/vendor/addons/"}}
+  </script>
+  <script type="module" src="/court-app.mjs"></script>
 </head>
 <body>
-  <main class="shell">
-    <p class="eyebrow">ShuttleMotion</p>
-    <h1>Badminton learning, grounded in the court.</h1>
-    <p>This is the first runnable foundation. The competition court viewer and lessons are planned next.</p>
-    <section class="card" aria-labelledby="reference-title">
-      <h2 id="reference-title">Court reference</h2>
-      <p>One documented court specification will drive the future 2D and 3D views.</p>
-      <a href="https://www.badminton.no/contentassets/c0b5fd676d9a4a10bd7a14c673a7bad0/section-4.1---laws-of-badminton---26-april-2025-v5.0-1--1.pdf">View the pinned BWF source</a>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Trang chủ ShuttleMotion"><span class="brand-mark" aria-hidden="true">S</span><span>Shuttle<span class="brand-light">Motion</span></span></a>
+    <div class="topbar-right"><span class="topbar-tag" data-i18n="edition">COURT LAB / 01</span><a class="topbar-link" href="/shot" data-i18n="shotLink">Mô phỏng cú đánh</a><a class="topbar-link" href="/training" data-i18n="trainingLink">Luyện tập đánh đôi</a><button id="language" class="language-button" type="button" aria-label="Switch language">EN</button></div>
+  </header>
+  <main class="app-layout">
+    <section class="viewer-section" aria-labelledby="page-title">
+      <div class="intro"><p class="kicker" data-i18n="kicker">KHÁM PHÁ SÂN CẦU LÔNG</p><h1 id="page-title" data-i18n="title">Sân cầu lông, nhìn rõ từng vạch.</h1><p class="intro-copy" data-i18n="intro">Khám phá sân tiêu chuẩn trong không gian 2D và 3D. Mọi số đo đều lấy từ cùng một bộ dữ liệu tham chiếu.</p></div>
+      <div class="toolbar" aria-label="Điều khiển sân">
+        <div class="segmented" role="group" aria-label="View"><button type="button" data-view="2d" aria-pressed="true">2D</button><button type="button" data-view="3d" aria-pressed="false">3D</button></div>
+        <div class="segmented" role="group" aria-label="Match type"><button type="button" data-mode="singles" aria-pressed="true" data-i18n="singles">Đơn</button><button type="button" data-mode="doubles" aria-pressed="false" data-i18n="doubles">Đôi</button></div>
+        <span class="toolbar-spacer"></span><span class="view-hint" id="view-hint" data-i18n="hint2d">Nhìn từ trên xuống</span>
+      </div>
+      <div class="stage">
+        <div class="stage-label"><span class="live-dot"></span><span data-i18n="stageLabel">SƠ ĐỒ SÂN TIÊU CHUẨN</span></div>
+        <div id="court-host" class="court-host" aria-live="polite"></div>
+        <div class="stage-footer"><span id="stage-status" role="status" data-i18n="loading">Đang tải dữ liệu sân…</span><div class="zoom-actions"><button id="zoom-out" type="button" aria-label="Zoom out">−</button><button id="zoom-in" type="button" aria-label="Zoom in">+</button><button id="reset-view" type="button" data-i18n="reset">Đặt lại</button></div></div>
+      </div>
     </section>
+    <aside class="details" aria-labelledby="details-title">
+      <div class="details-head"><p class="kicker" data-i18n="reference">THÔNG SỐ THAM CHIẾU</p><h2 id="details-title" data-i18n="detailsTitle">Một sân. Hai góc nhìn.</h2><p data-i18n="detailsIntro">Các vạch vẫn giữ nguyên kích thước khi chuyển giữa 2D và 3D.</p></div>
+      <form id="shuttle-form" class="sandbox">
+        <h3 data-i18n="shuttleTitle">QUẢ CẦU</h3>
+        <div class="sandbox-fields">
+          <label><span data-i18n="side">Phía sân</span><select name="side"><option value="A">A</option><option value="B">B</option></select></label>
+          <label><span data-i18n="left">Lệch trái (m)</span><input name="left" type="number" step="0.05" min="-3.05" max="3.05" value="1" required></label>
+          <label><span data-i18n="fromNet">Cách lưới (m)</span><input name="fromNet" type="number" step="0.1" min="0.1" max="6.7" value="3" required></label>
+          <label><span data-i18n="height">Độ cao (m)</span><input name="height" type="number" step="0.1" min="0.1" max="5" value="2" required></label>
+          <label><span data-i18n="speed">Tốc độ đầu (m/s, trống = số đã công bố)</span><input name="speed" type="number" step="0.1" min="1" max="120"></label>
+          <label><span data-i18n="contactHeight">Độ cao bên kia đỡ cầu (m)</span><input name="contactHeight" type="number" step="0.05" min="0.05" max="3.5" value="1" required></label>
+          <label><span data-i18n="contactMs">Thời gian chạm vợt (ms, giả định)</span><input name="contactMs" type="number" step="0.1" min="0.1" max="50"></label>
+        </div>
+        <div class="sandbox-actions"><button type="submit" data-i18n="placeShuttle">Đặt quả cầu</button><button type="reset" data-i18n="clear">Xoá</button></div>
+        <p id="shuttle-world" class="sandbox-readout"></p>
+        <div id="stroke-filter" class="stroke-filter shuttle-only" role="group" hidden></div>
+        <ul id="path-list" class="path-list"></ul>
+        <div id="reception" class="reception-readout" aria-live="polite"></div>
+        <h3 class="returns-title returns-only" data-i18n="returnsTitle" hidden>HƯỚNG PHẢN CẦU</h3>
+        <div id="return-filter" class="stroke-filter returns-only" role="group" hidden></div>
+        <ul id="return-list" class="path-list returns"></ul>
+        <p class="sandbox-note" data-i18n="returnNote">Phản cầu dùng tốc độ VĐV đỉnh cao, chưa tính ảnh hưởng của tốc độ cầu tới. Quả cầu vẽ đúng kích thước thật.</p>
+        <p class="sandbox-note" data-i18n="pathNote">Đường bay ứng viên theo vật lý, dùng tốc độ VĐV đỉnh cao đã công bố. Không phải lời khuyên kỹ thuật.</p>
+      </form>
+      <form id="player-form" class="sandbox">
+        <h3 data-i18n="playerTitle">NGƯỜI CHƠI</h3>
+        <div class="sandbox-fields">
+          <label><span data-i18n="side">Phía sân</span><select name="side"><option value="A">A</option><option value="B">B</option></select></label>
+          <label><span data-i18n="left">Lệch trái (m)</span><input name="left" type="number" step="0.05" min="-3.05" max="3.05" value="0" required></label>
+          <label><span data-i18n="fromNet">Cách lưới (m)</span><input name="fromNet" type="number" step="0.1" min="0.1" max="6.7" value="4" required></label>
+          <label><span data-i18n="bodyHeight">Chiều cao (m)</span><input name="height" type="number" step="0.01" min="1" max="2.3" value="1.75" required></label>
+        </div>
+        <div class="sandbox-actions"><button type="submit" data-i18n="placePlayer">Đặt người chơi</button><button type="reset" data-i18n="clear">Xoá</button></div>
+      </form>
+      <div class="metric-list">
+        <div class="metric"><span data-i18n="courtLength">Chiều dài sân</span><strong id="metric-length">—</strong></div>
+        <div class="metric"><span data-i18n="doublesWidth">Bề ngang sân đôi</span><strong id="metric-doubles">—</strong></div>
+        <div class="metric"><span data-i18n="singlesWidth">Bề ngang sân đơn</span><strong id="metric-singles">—</strong></div>
+        <div class="metric"><span data-i18n="lineWidth">Bề rộng vạch</span><strong id="metric-line">—</strong></div>
+        <div class="metric"><span data-i18n="shortService">Vạch giao cầu ngắn từ lưới</span><strong id="metric-short">—</strong></div>
+        <div class="metric"><span data-i18n="longService">Vạch giao cầu dài đôi từ biên cuối</span><strong id="metric-long">—</strong></div>
+        <div class="metric"><span data-i18n="netCentre">Lưới cao tại giữa sân</span><strong id="metric-net">—</strong></div>
+        <div class="metric"><span data-i18n="netDepth">Chiều sâu lưới</span><strong id="metric-depth">—</strong></div>
+        <div class="metric"><span data-i18n="postHeight">Cột lưới cao</span><strong id="metric-post">—</strong></div>
+      </div>
+      <div class="legend"><h3 data-i18n="legend">CHÚ GIẢI</h3><p><i class="swatch active"></i><span data-i18n="boundary">Biên thi đấu đang chọn</span></p><p><i class="swatch service"></i><span data-i18n="service">Vạch giao cầu áp dụng</span></p><p><i class="swatch neutral"></i><span data-i18n="otherLines">Các vạch sân còn lại</span></p></div>
+      <div class="source-note"><span data-i18n="sourceTitle">NGUỒN KÍCH THƯỚC</span><p data-i18n="sourceNote">BWF Laws 5.0 (1), hiệu lực 26/04/2025. Chưa xác nhận đây là bản mới nhất.</p><a href="https://www.badminton.no/contentassets/c0b5fd676d9a4a10bd7a14c673a7bad0/section-4.1---laws-of-badminton---26-april-2025-v5.0-1--1.pdf" target="_blank" rel="noopener noreferrer" data-i18n="sourceLink">Xem tài liệu BWF ↗</a></div>
+    </aside>
   </main>
 </body>
 </html>
