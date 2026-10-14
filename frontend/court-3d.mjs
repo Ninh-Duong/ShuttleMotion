@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { lineGeometry, lineRole } from './court-geometry.mjs';
-import { strokeColours } from './shuttle-physics.mjs';
+import { netHeightAt, racketReach, strokeColours } from './shuttle-physics.mjs';
 
 const colours = { standard: 0xe6f4e9, boundary: 0xf7c86a, service: 0xa9e5df };
 
@@ -49,11 +49,10 @@ export function mountCourt3d(host, court, mode, label, shuttleSpec) {
     for (let i = 0; i < segments; i++) {
       const x1 = -width / 2 + width * i / segments;
       const x2 = -width / 2 + width * (i + 1) / segments;
-      const height = x => net.centreTopHeight + (net.sidelineTopHeight - net.centreTopHeight) * Math.pow(x / (width / 2), 2);
-      const a = height(x1) - topOffset;
-      const b = height(x2) - topOffset;
-      const c = height(x1) - bottomOffset;
-      const d = height(x2) - bottomOffset;
+      const a = netHeightAt(net, x1) - topOffset;
+      const b = netHeightAt(net, x2) - topOffset;
+      const c = netHeightAt(net, x1) - bottomOffset;
+      const d = netHeightAt(net, x2) - bottomOffset;
       vertices.push(x1, a, 0, x1, c, 0, x2, b, 0, x2, b, 0, x1, c, 0, x2, d, 0);
     }
     const geometry = new THREE.BufferGeometry();
@@ -81,7 +80,11 @@ export function mountCourt3d(host, court, mode, label, shuttleSpec) {
   controls.enableDamping = false;
   let userMoved = false;
   controls.addEventListener('start', () => { userMoved = true; });
-  const render = () => renderer.render(scene, camera);
+  // Coalesce: layer updates made in one task (e.g. four players, shuttle and trail in one animation frame) render
+  // once, in the same frame, when that task ends.
+  let queued = false, disposed = false;
+  const draw = () => { queued = false; if (!disposed) renderer.render(scene, camera); };
+  const render = () => { if (!queued) { queued = true; queueMicrotask(draw); } };
   controls.addEventListener('change', render);
   function resize() {
     const { width, height } = host.getBoundingClientRect();
@@ -94,7 +97,7 @@ export function mountCourt3d(host, court, mode, label, shuttleSpec) {
       controls.update();
     }
     renderer.setSize(width, height, false);
-    render();
+    draw(); // setSize clears the canvas; draw now so a resize does not flash empty
   }
   const observer = new ResizeObserver(resize);
   observer.observe(host);
@@ -224,7 +227,7 @@ export function mountCourt3d(host, court, mode, label, shuttleSpec) {
       const head = new THREE.Vector3(position.x, position.y, position.z);
       let down = new THREE.Vector3(0, -1, 0).addScaledVector(n, n.y);
       if (down.lengthSq() < 1e-6) down = new THREE.Vector3(0, 0, 1);
-      const hand = head.clone().addScaledVector(down.normalize(), (spec.overallLengthMm - spec.stringAreaLengthMm / 2) / 1000);
+      const hand = head.clone().addScaledVector(down.normalize(), racketReach(spec));
       replace('racket', racketModel(hand, head, n, spec));
     },
     // Floor markers for target points; the active one is drawn larger.
@@ -267,8 +270,7 @@ export function mountCourt3d(host, court, mode, label, shuttleSpec) {
       if (!player.arm && player.racket) {
         // Ready hold in the racket hand (local frame faces -z, right is +x): head up and forward, face to the net.
         const hand = new THREE.Vector3(shoulderX, 0.43 * h, -0.04 * h);
-        const reach = (player.racket.overallLengthMm - player.racket.stringAreaLengthMm / 2) / 1000;
-        const head = hand.clone().addScaledVector(new THREE.Vector3(0, 0.75, -0.66).normalize(), reach);
+        const head = hand.clone().addScaledVector(new THREE.Vector3(0, 0.75, -0.66).normalize(), racketReach(player.racket));
         const fist = new THREE.Mesh(new THREE.SphereGeometry(0.026 * h, 12, 8), skin);
         fist.position.copy(hand);
         body.add(fist, racketModel(hand, head, new THREE.Vector3(0, 0, -1), player.racket));
@@ -329,6 +331,7 @@ export function mountCourt3d(host, court, mode, label, shuttleSpec) {
       controls.update();
     },
     dispose() {
+      disposed = true;
       observer.disconnect();
       controls.dispose();
       scene.traverse(object => {

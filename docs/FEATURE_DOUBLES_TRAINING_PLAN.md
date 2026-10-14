@@ -80,7 +80,8 @@ Peer-reviewed match analyses (for example Le Mansec et al. 2023) describe rally 
 - unique ids, known categories and statuses;
 - `en` and `vi` text, and a verbatim quote with pages;
 - usable source ids, and quote sources that are among the lesson's own sources;
-- two players per side, all positions present and inside the court plus run-off;
+- two players per side, all positions present, within the doubles width and at most 0.8 m behind the back boundary (a project limit, not a BWF run-off rule);
+- shot targets inside the doubles court, with limits read from `court.json`;
 - known shot types with a speed, and an `arc` of `flat` or `high`;
 - that the next hitter is on the other side.
 

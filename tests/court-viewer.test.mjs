@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { courtMetrics, courtSvg, lineGeometry, lineRole } from '../frontend/court-geometry.mjs';
+import { formatNumber, withCommon } from '../frontend/ui.mjs';
 import { startServer } from '../backend/server.mjs';
 import { createLogger } from '../backend/logs.mjs';
 
@@ -50,6 +51,20 @@ test('dimension labels derive from the canonical court values', () => {
   assert.match(en, /13\.40 m/);
 });
 
+test('shared UI formats numbers per language and gives every page all its translated keys', async () => {
+  assert.equal(formatNumber('vi', 13.4, 2), '13,40');
+  assert.equal(formatNumber('en', 13.4, 2), '13.40');
+  assert.equal(formatNumber('en', 6.1, 0), '6');
+  for (const page of ['court', 'shot', 'training']) {
+    const html = readFileSync(new URL(`../frontend/${page === 'court' ? 'index' : page}.html`, import.meta.url), 'utf8');
+    const source = readFileSync(new URL(`../frontend/${page}-app.mjs`, import.meta.url), 'utf8');
+    const words = eval(`(${source.match(/const words = withCommon\((\{[\s\S]*?\n\})\);/)[1]})`);
+    for (const key of html.matchAll(/data-i18n="([^"]+)"/g).map(m => m[1])) {
+      for (const lang of ['vi', 'en']) assert.equal(typeof withCommon(words)[lang][key], 'string', `${page} ${lang} ${key}`);
+    }
+  }
+});
+
 test('server provides court data and pinned local 3D modules', async () => {
   const server = await startServer({ dev: false, host: '127.0.0.1', port: 0, logger: createLogger({ sink: () => {} }) });
   try {
@@ -58,10 +73,20 @@ test('server provides court data and pinned local 3D modules', async () => {
     assert.deepEqual(data.dimensions, court.dimensions);
     assert.equal((await fetch(`${base}/assets/player.json`)).status, 200);
     assert.equal((await fetch(`${base}/shot`)).status, 200);
-    for (const path of ['/court-app.mjs', '/court-geometry.mjs', '/court-3d.mjs', '/shuttle-physics.mjs', '/shot-app.mjs', '/lesson-timeline.mjs', '/training-app.mjs', '/vendor/three.module.js', '/vendor/three.core.js', '/vendor/addons/controls/OrbitControls.js']) {
+    for (const path of ['/court-app.mjs', '/ui.mjs', '/court-geometry.mjs', '/court-3d.mjs', '/shuttle-physics.mjs', '/shot-app.mjs', '/lesson-timeline.mjs', '/training-app.mjs', '/vendor/three.module.js', '/vendor/three.core.js', '/vendor/addons/controls/OrbitControls.js']) {
       const response = await fetch(`${base}${path}`);
       assert.equal(response.status, 200, path);
       assert.match(response.headers.get('content-type'), /text\/javascript/, path);
     }
+    const vendor = await fetch(`${base}/vendor/three.core.js`, { headers: { 'Accept-Encoding': 'gzip' } });
+    assert.equal(vendor.headers.get('content-encoding'), 'gzip');
+    assert.equal(vendor.headers.get('cache-control'), 'no-cache');
+    const etag = vendor.headers.get('etag');
+    assert.ok(etag && (await vendor.text()).length > 1_000_000, 'decompresses to the full module');
+    assert.equal((await fetch(`${base}/vendor/three.core.js`, { headers: { 'If-None-Match': etag } })).status, 304);
+    const plain = await fetch(`${base}/assets/court.json`, { headers: { 'Accept-Encoding': 'identity' } });
+    assert.equal(plain.headers.get('content-encoding'), null);
+    assert.deepEqual((await plain.json()).dimensions, court.dimensions);
+    assert.equal((await fetch(`${base}/api/lessons`)).headers.get('cache-control'), 'no-store');
   } finally { await new Promise(resolve => server.close(resolve)); }
 });

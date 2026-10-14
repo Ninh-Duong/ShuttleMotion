@@ -1,12 +1,13 @@
 import { buildTimeline, playerPosition } from './lesson-timeline.mjs';
-import { estimateJump, sampleFlight } from './shuttle-physics.mjs';
+import { FLIGHT_SAMPLE_S, estimateJump, sampleFlight } from './shuttle-physics.mjs';
+import { applyText, getJson, loadCourt3d, loadLang, toggleLang, withCommon } from './ui.mjs';
 
-const words = {
+const words = withCommon({
   vi: {
-    courtLink: 'Sân', shotLink: 'Mô phỏng cú đánh', kicker: 'LUYỆN TẬP ĐÁNH ĐÔI', draft: 'Bản nháp từ giáo trình BWF · chờ HLV duyệt',
-    stageLabel: 'DI CHUYỂN 2 ĐẤU 2', loading: 'Đang tải…', ready: '3D · Phát, xem từng bước hoặc quay chậm', noWebgl: 'Trình duyệt này không mở được 3D.',
+    kicker: 'LUYỆN TẬP ĐÁNH ĐÔI', draft: 'Bản nháp từ giáo trình BWF · chờ HLV duyệt',
+    stageLabel: 'DI CHUYỂN 2 ĐẤU 2', ready: '3D · Phát, xem từng bước hoặc quay chậm',
     loadError: 'Không tải được bài học. Hãy làm mới trang.', lessonError: 'Bài học này có dữ liệu không hợp lệ:',
-    playAll: '▶ Phát', pause: '⏸ Dừng', topView: 'Nhìn từ trên', reset: 'Đặt lại',
+    playAll: '▶ Phát', pause: '⏸ Dừng', topView: 'Nhìn từ trên',
     libraryTitle: 'BÀI HỌC', playersTitle: 'NGƯỜI CHƠI', notesTitle: 'GHI CHÚ', sourcesTitle: 'NGUỒN',
     step: 'Bước', page: 'tr.', speedsNote: 'Tốc độ minh họa (chưa có số đo)', end: 'Kết thúc: vị trí cuối của hai cặp',
     categories: { 'serve-receive': 'Giao & nhận giao', attack: 'Tấn công & đập cầu', defence: 'Phòng thủ & phản công', 'rotation-mixed': 'Xoay vị trí & đôi nam nữ' },
@@ -20,10 +21,10 @@ const words = {
     }
   },
   en: {
-    courtLink: 'Court', shotLink: 'Shot lab', kicker: 'DOUBLES TRAINING', draft: 'Draft from BWF coaching material · awaiting coach review',
-    stageLabel: '2 VS 2 MOVEMENT', loading: 'Loading…', ready: '3D · Play, step through or slow down', noWebgl: '3D is unavailable in this browser.',
+    kicker: 'DOUBLES TRAINING', draft: 'Draft from BWF coaching material · awaiting coach review',
+    stageLabel: '2 VS 2 MOVEMENT', ready: '3D · Play, step through or slow down',
     loadError: 'Lessons could not be loaded. Please refresh.', lessonError: 'This lesson has invalid data:',
-    playAll: '▶ Play', pause: '⏸ Pause', topView: 'Top view', reset: 'Reset',
+    playAll: '▶ Play', pause: '⏸ Pause', topView: 'Top view',
     libraryTitle: 'LESSONS', playersTitle: 'PLAYERS', notesTitle: 'NOTES', sourcesTitle: 'SOURCES',
     step: 'Step', page: 'p.', speedsNote: 'Illustrative speeds (not measured)', end: 'End: final positions of both pairs',
     categories: { 'serve-receive': 'Serve & receive', attack: 'Attack & smash', defence: 'Defence & counter-attack', 'rotation-mixed': 'Rotation & mixed doubles' },
@@ -31,28 +32,20 @@ const words = {
     teams: { A: 'Pair A', B: 'Pair B' },
     notes: null
   }
-};
+});
 const kits = { A1: 0x2d6cdf, A2: 0x8fb6ff, B1: 0xd8573c, B2: 0xf4a17d };
 
 const host = document.querySelector('#court-host');
 const status = document.querySelector('#stage-status');
 const playButton = document.querySelector('#play');
-const state = { lang: 'vi', list: null, id: null, detail: null, segments: [], step: 0, error: null };
+const state = { lang: loadLang(), list: null, id: null, detail: null, segments: [], step: 0, error: null };
 let court, shuttle, player, scene, animation = null;
-try { if (localStorage.getItem('shuttlemotion-language') === 'en') state.lang = 'en'; } catch {}
 
 const t = () => words[state.lang];
 const local = value => value?.[state.lang] ?? value?.en ?? '';
-const getJson = async url => {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
-  return response.json();
-};
 
 function translate() {
-  document.documentElement.lang = state.lang;
-  for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = t()[el.dataset.i18n];
-  document.querySelector('#language').textContent = state.lang === 'vi' ? 'EN' : 'VI';
+  applyText(t(), state.lang);
   playButton.textContent = animation ? t().pause : t().playAll;
   if (state.list) renderLibrary();
   if (state.detail) renderLesson();
@@ -67,6 +60,7 @@ function renderLibrary() {
     for (const lesson of state.list.lessons.filter(item => item.category === category)) {
       const button = document.createElement('button');
       button.type = 'button';
+      button.dataset.id = lesson.id;
       button.setAttribute('aria-pressed', String(lesson.id === state.id));
       button.textContent = local(lesson.title);
       button.addEventListener('click', () => selectLesson(lesson.id));
@@ -116,7 +110,7 @@ function renderStepCard() {
   document.querySelector('#step-quote p').textContent = `“${step.quote.text}”`;
   const source = state.detail.sources.find(s => s.id === (step.quote.sourceId ?? lesson.sources[0].sourceId));
   document.querySelector('#step-quote cite').textContent = `${source?.title.split(',')[0] ?? ''} · ${t().page} ${step.quote.pages}`;
-  for (const button of document.querySelectorAll('#library button')) button.setAttribute('aria-pressed', String(button.textContent === local(lesson.title)));
+  for (const button of document.querySelectorAll('#library button')) button.setAttribute('aria-pressed', String(button.dataset.id === lesson.id));
 }
 
 // Players move linearly from this step's positions to the next step's over the segment; the shuttle follows the flight.
@@ -141,7 +135,7 @@ function draw(stepIndex, time) {
   const at = sampleFlight(segment.points, Math.min(time, segment.duration));
   scene.setShuttle(at.position, at.direction);
   const trail = [];
-  for (let s = Math.max(0, time - 0.4); s <= Math.min(time, segment.duration) + 1e-9; s += 0.01) trail.push({ ...sampleFlight(segment.points, s).position, color: '#e8f1ec' });
+  for (let s = Math.max(0, time - 0.4); s <= Math.min(time, segment.duration) + 1e-9; s += FLIGHT_SAMPLE_S) trail.push({ ...sampleFlight(segment.points, s).position, color: '#e8f1ec' });
   scene.setTrail(trail.length > 1 ? trail : null);
 }
 
@@ -184,8 +178,13 @@ function play(all) {
 
 async function selectLesson(id) {
   stop();
+  try { state.detail = await getJson(`/api/lessons/${encodeURIComponent(id)}`); } catch (error) {
+    console.error('Lesson unavailable:', error);
+    status.textContent = t().loadError;
+    return;
+  }
+  status.textContent = scene ? t().ready : t().noWebgl;
   state.id = id;
-  state.detail = await getJson(`/api/lessons/${encodeURIComponent(id)}`);
   const p = player.defaultProfile;
   const jump = estimateJump({ sex: p.sex, height: p.heightM, mass: p.massKg, level: p.level }, player.jumpModel);
   try {
@@ -206,8 +205,7 @@ document.querySelector('#prev').addEventListener('click', () => show(state.step 
 document.querySelector('#top-view').addEventListener('click', () => scene?.focus({ x: 0, y: 0, z: 0 }, { x: 0, y: 17, z: 0.01 }));
 document.querySelector('#reset-view').addEventListener('click', () => scene?.reset());
 document.querySelector('#language').addEventListener('click', () => {
-  state.lang = state.lang === 'vi' ? 'en' : 'vi';
-  try { localStorage.setItem('shuttlemotion-language', state.lang); } catch {}
+  state.lang = toggleLang(state.lang);
   translate();
 });
 
@@ -216,9 +214,7 @@ try {
   [court, shuttle, player, state.list] = await Promise.all(['/assets/court.json', '/assets/shuttle.json', '/assets/player.json', '/api/lessons'].map(getJson));
   renderLibrary();
   try {
-    if (!document.createElement('canvas').getContext('webgl2')) throw new Error('WebGL2 unavailable');
-    const { mountCourt3d } = await import('./court-3d.mjs');
-    scene = mountCourt3d(host, court, 'doubles', t().stageLabel, shuttle.specification);
+    scene = (await loadCourt3d())(host, court, 'doubles', t().stageLabel, shuttle.specification);
     status.textContent = t().ready;
   } catch (error) {
     console.error('3D unavailable:', error);

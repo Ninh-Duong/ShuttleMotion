@@ -1,11 +1,12 @@
-import { aimAt, clearsNet, closestMiss, estimateJump, highestContact, interceptPose, launchVector, playerToWorld, reachPose, sampleFlight, shotOutcome, simulate, sixCorners, solveTarget, suggestStand } from './shuttle-physics.mjs';
+import { FLIGHT_SAMPLE_S, aimAt, clearsNet, closestMiss, estimateJump, highestContact, interceptPose, launchVector, playerToWorld, reachPose, sampleFlight, shotOutcome, simulate, sixCorners, solveTarget, suggestStand } from './shuttle-physics.mjs';
+import { applyText, formatNumber, getJson, loadCourt3d, loadLang, toggleLang, withCommon } from './ui.mjs';
 
-const words = {
+const words = withCommon({
   vi: {
-    courtLink: 'Sân', trainingLink: 'Luyện tập đánh đôi', kicker: 'MÔ PHỎNG CÚ ĐÁNH', title: 'Mặt vợt quyết định đường cầu.',
+    kicker: 'MÔ PHỎNG CÚ ĐÁNH', title: 'Mặt vợt quyết định đường cầu.',
     intro: 'Nhập điểm tiếp cầu, tốc độ và góc mặt vợt. Quả cầu bay theo đúng thông số đó: qua lưới, vào lưới hay ra ngoài.',
-    singles: 'Đơn', doubles: 'Đôi', hint: 'Kéo để xoay, cuộn để phóng to', stageLabel: 'ĐƯỜNG CẦU THEO THÔNG SỐ',
-    loading: 'Đang tải…', ready: '3D · Kéo thanh trượt để đổi cú đánh', noWebgl: 'Trình duyệt này không mở được 3D.', loadError: 'Không tải được dữ liệu. Hãy làm mới trang.', reset: 'Đặt lại',
+    hint: 'Kéo để xoay, cuộn để phóng to', stageLabel: 'ĐƯỜNG CẦU THEO THÔNG SỐ',
+    ready: '3D · Kéo thanh trượt để đổi cú đánh', loadError: 'Không tải được dữ liệu. Hãy làm mới trang.',
     hitterView: 'Góc người đánh', closeView: 'Cận cảnh', bodyHeight: 'Chiều cao (m)', mass: 'Cân nặng (kg)', sex: 'Giới tính', male: 'Nam', female: 'Nữ',
     level: 'Thể lực bật nhảy', weak: 'Yếu', average: 'Trung bình', good: 'Khá', jumpInput: 'Bật nhảy (cm, trống = ước lượng)', show: 'Hiện',
     playersTitle: 'NGƯỜI CHƠI', playerA: 'NGƯỜI CHƠI A · ĐÁNH', playerB: 'NGƯỜI CHƠI B · NHẬN',
@@ -29,14 +30,14 @@ const words = {
     netHit: 'Chạm lưới ở độ cao', underNet: 'Đi dưới lưới ở độ cao', wide: 'Đi ra ngoài cột lưới', netAt: 'qua lưới cao', above: 'cao hơn mép lưới',
     landAt: 'Rơi tại', after: 'sau', apex: 'điểm cao nhất', landingSpeed: 'tốc độ khi chạm đất',
     reach: 'Không tới được ở tốc độ này', apply: 'Áp dụng',
-    strokes: { smash: 'Đập cầu', clear: 'Phông cầu', drop: 'Bỏ nhỏ' }, levels: { novice: 'người mới', trained: 'có tập luyện', elite: 'VĐV đỉnh cao' },
-    zones: { front: 'Lưới', mid: 'Giữa sân', rear: 'Cuối sân' }, lanes: { left: 'trái', centre: 'giữa', right: 'phải' }
+    levels: { novice: 'người mới', trained: 'có tập luyện', elite: 'VĐV đỉnh cao' },
+    zones: { front: 'Lưới', mid: 'Giữa sân', rear: 'Cuối sân' }
   },
   en: {
-    courtLink: 'Court', trainingLink: 'Doubles training', kicker: 'SHOT LAB', title: 'The racket face decides the flight.',
+    kicker: 'SHOT LAB', title: 'The racket face decides the flight.',
     intro: 'Enter the contact point, speed and racket-face angle. The shuttle flies exactly as entered: over the net, into it, or out.',
-    singles: 'Singles', doubles: 'Doubles', hint: 'Drag to orbit, scroll to zoom', stageLabel: 'FLIGHT FROM THE ENTERED HIT',
-    loading: 'Loading…', ready: '3D · Move the sliders to change the hit', noWebgl: '3D is unavailable in this browser.', loadError: 'Data could not be loaded. Please refresh.', reset: 'Reset',
+    hint: 'Drag to orbit, scroll to zoom', stageLabel: 'FLIGHT FROM THE ENTERED HIT',
+    ready: '3D · Move the sliders to change the hit', loadError: 'Data could not be loaded. Please refresh.',
     hitterView: "Hitter's view", closeView: 'Close-up', bodyHeight: 'Height (m)', mass: 'Body mass (kg)', sex: 'Sex', male: 'Male', female: 'Female',
     level: 'Jump fitness', weak: 'Weak', average: 'Average', good: 'Good', jumpInput: 'Jump (cm, empty = estimate)', show: 'Show',
     playersTitle: 'PLAYERS', playerA: 'PLAYER A · HITTER', playerB: 'PLAYER B · RECEIVER',
@@ -60,33 +61,39 @@ const words = {
     netHit: 'Hits the net at', underNet: 'Passes under the net at', wide: 'Passes outside the net posts', netAt: 'crosses the net at', above: 'above the tape',
     landAt: 'Lands at', after: 'after', apex: 'apex', landingSpeed: 'landing speed',
     reach: 'Out of reach at this speed', apply: 'Apply',
-    strokes: { smash: 'Smash', clear: 'Clear', drop: 'Drop' }, levels: { novice: 'novice', trained: 'trained', elite: 'elite' },
-    zones: { front: 'Front', mid: 'Mid', rear: 'Rear' }, lanes: { left: 'left', centre: 'centre', right: 'right' }
+    levels: { novice: 'novice', trained: 'trained', elite: 'elite' },
+    zones: { front: 'Front', mid: 'Mid', rear: 'Rear' }
   }
-};
+});
 const outcomeColours = { in: '#7ee081', net: '#ff6b5b', short: '#ffb347', out: '#ffb347' };
 
 const form = document.querySelector('#shot-form');
 const host = document.querySelector('#court-host');
 const status = document.querySelector('#stage-status');
-const state = { lang: 'vi', mode: 'singles', preset: 'smash-novice', corners: [], scenario: 'incoming', incoming: null, poseA: null, suggestion: null, outgoing: null };
+const state = { lang: loadLang(), mode: 'singles', preset: 'smash-novice', corners: [], scenario: 'incoming', incoming: null, poseA: null, suggestion: null, outgoing: null };
 let animation = null;
 let court, shuttle, player, scene;
-try { if (localStorage.getItem('shuttlemotion-language') === 'en') state.lang = 'en'; } catch {}
 
 const t = () => words[state.lang];
-const fmt = (value, digits = 2) => new Intl.NumberFormat(state.lang === 'vi' ? 'vi-VN' : 'en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+const fmt = (value, digits = 2) => formatNumber(state.lang, value, digits);
 const num = name => Number(form.elements[name].value);
 const hitterSide = () => form.elements.side.value;
 const otherSide = () => (hitterSide() === 'A' ? 'B' : 'A');
 // Inverse of playerToWorld for a ground position on the given side.
 const toPlayerView = (side, { x, z }) => (side === 'A' ? { left: -x || 0, fromNet: z } : { left: x, fromNet: -z || 0 });
 
-// The flight B sends over (incoming scenario), aimed at the chosen landing spot on A's side.
+// The flight B sends over (incoming scenario), aimed at the chosen landing spot on A's side. Memoised on its inputs:
+// a high aim costs ~14 ms and racket-face sliders call this on every move without changing it.
+const INCOMING_INPUTS = ['side', 'B-left', 'B-fromNet', 'in-height', 'in-left', 'in-fromNet', 'in-speed', 'in-arc'];
+let incomingMemo = { key: null, flight: null };
 function incomingFlight() {
+  const key = INCOMING_INPUTS.map(name => form.elements[name].value).join('|');
+  if (key === incomingMemo.key) return incomingMemo.flight;
   const from = playerToWorld(otherSide(), { left: num('B-left'), fromNet: num('B-fromNet'), height: num('in-height') });
   const target = playerToWorld(hitterSide(), { left: num('in-left'), fromNet: num('in-fromNet'), height: 0 });
-  return aimAt(from, target, num('in-speed'), shuttle.flight, { clears: c => clearsNet(court.equipment.net, c), prefer: form.elements['in-arc'].value === 'high' ? 'high' : 'flat' });
+  const flight = aimAt(from, target, num('in-speed'), shuttle.flight, { clears: c => clearsNet(court.equipment.net, c), prefer: form.elements['in-arc'].value === 'high' ? 'high' : 'flat' });
+  incomingMemo = { key, flight };
+  return flight;
 }
 
 // Where A meets the shuttle: typed (fixed scenario) or the highest reachable point of the incoming flight.
@@ -116,9 +123,7 @@ const tiltText = a => Math.abs(a) < 0.25 ? t().flat : `${a < 0 ? t().down : t().
 const directionText = a => Math.abs(a) < 0.25 ? t().straight : `${a < 0 ? t().toLeft : t().toRight} ${fmt(Math.abs(a), 1)}°`;
 
 function translate() {
-  document.documentElement.lang = state.lang;
-  for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = t()[el.dataset.i18n];
-  document.querySelector('#language').textContent = state.lang === 'vi' ? 'EN' : 'VI';
+  applyText(t(), state.lang);
   if (shuttle) { renderPresets(); simulateHit(); renderCorners(); }
 }
 
@@ -271,10 +276,10 @@ function renderRunResult() {
     const pose = state.poseA;
     const pts = state.incoming.points;
     const next = pts[Math.min(pose.index + 1, pts.length - 1)], here = pts[pose.index];
-    const speed = Math.hypot(next[0] - here[0], next[1] - here[1], next[2] - here[2]) / 0.01;
+    const speed = Math.hypot(next[0] - here[0], next[1] - here[1], next[2] - here[2]) / FLIGHT_SAMPLE_S;
     const a = profile('A');
     title = w.hitOk;
-    lines.push(`${w.meetAt} ${fmt(pose.contact.y)} m, ${fmt(pose.index * 0.01)} s ${w.afterIncoming} · ${w.arrive} ${fmt(speed, 1)} m/s`);
+    lines.push(`${w.meetAt} ${fmt(pose.contact.y)} m, ${fmt(pose.index * FLIGHT_SAMPLE_S)} s ${w.afterIncoming} · ${w.arrive} ${fmt(speed, 1)} m/s`);
     lines.push(pose.lift > 0 ? `${w.jumpUsed} ${fmt(pose.lift * 100, 0)} cm ${w.of} ${fmt(a.jump * 100, 0)} cm` : w.noJumpShort);
   } else {
     title = w.hitMiss;
@@ -329,10 +334,11 @@ function runTest() {
   const jumper = state.scenario === 'incoming' || state.missPose;
   const lift = pose?.lift ?? 0;
   const half = Math.sqrt(2 * lift / g);
-  const contactTime = incoming ? (pose ? pose.index * 0.01 : (incoming.length - 1) * 0.01) : Math.max(0.4, half);
+  const duration = points => (points.length - 1) * FLIGHT_SAMPLE_S;
+  const contactTime = incoming ? (pose ? pose.index * FLIGHT_SAMPLE_S : duration(incoming)) : Math.max(0.4, half);
   const out = state.outgoing;
   const after = out ? out.points : state.drop ?? null;
-  const flightEnd = incoming && !out ? (incoming.length - 1) * 0.01 : contactTime + (after ? (after.length - 1) * 0.01 : 0);
+  const flightEnd = incoming && !out ? duration(incoming) : contactTime + (after ? duration(after) : 0);
   const outColour = out ? outcomeColours[out.result] : '#e8f1ec';
   const hanging = fixedContact();
   const at = time => incoming && !out ? sampleFlight(incoming, time)
@@ -344,7 +350,7 @@ function runTest() {
     const time = (now - start) / 1000 * rate;
     const head = Math.min(time, flightEnd);
     const trail = [];
-    for (let k = Math.max(0, time - TRAIL_SECONDS); k <= head + 1e-9; k += 0.01) {
+    for (let k = Math.max(0, time - TRAIL_SECONDS); k <= head + 1e-9; k += FLIGHT_SAMPLE_S) {
       trail.push({ ...at(k).position, color: k < contactTime ? '#e8f1ec' : outColour });
     }
     scene.setTrail(trail.length > 1 ? trail : null);
@@ -433,8 +439,7 @@ document.querySelectorAll('[data-mode]').forEach(button => button.addEventListen
   update(true);
 }));
 document.querySelector('#language').addEventListener('click', () => {
-  state.lang = state.lang === 'vi' ? 'en' : 'vi';
-  try { localStorage.setItem('shuttlemotion-language', state.lang); } catch {}
+  state.lang = toggleLang(state.lang);
   translate();
 });
 document.querySelector('#zoom-in').addEventListener('click', () => scene?.zoom(1));
@@ -461,17 +466,10 @@ function hitterView() {
 
 translate();
 try {
-  const [c, s, p] = await Promise.all(['/assets/court.json', '/assets/shuttle.json', '/assets/player.json'].map(async url => {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return response.json();
-  }));
-  court = c; shuttle = s; player = p;
+  [court, shuttle, player] = await Promise.all(['/assets/court.json', '/assets/shuttle.json', '/assets/player.json'].map(getJson));
   renderPresets();
   try {
-    if (!document.createElement('canvas').getContext('webgl2')) throw new Error('WebGL2 unavailable');
-    const { mountCourt3d } = await import('./court-3d.mjs');
-    scene = mountCourt3d(host, court, state.mode, t().stageLabel, shuttle.specification);
+    scene = (await loadCourt3d())(host, court, state.mode, t().stageLabel, shuttle.specification);
     status.textContent = t().ready;
     hitterView();
   } catch (error) {

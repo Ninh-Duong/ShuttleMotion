@@ -3,6 +3,8 @@
 
 const rad = deg => deg * Math.PI / 180;
 export const strokeColours = { smash: '#ff6b5b', clear: '#4f9fe8', drop: '#a875e8' };
+// simulate() records one flight point per FLIGHT_SAMPLE_S; point i is at time i * FLIGHT_SAMPLE_S.
+export const FLIGHT_SAMPLE_S = 0.01;
 
 // Side A is z > 0 (player faces -z, their left is -x); side B is z < 0 (their left is +x).
 export function playerToWorld(side, { left, fromNet, height }) {
@@ -18,6 +20,7 @@ export function dragFactor(flight) {
 // stop(next, v, previous) ends the flight early (e.g. at a receiver's contact height) and returns that state.
 export function simulate(p0, v0, flight, { dt = 0.001, stop } = {}) {
   const k = dragFactor(flight);
+  const every = Math.max(1, Math.round(FLIGHT_SAMPLE_S / dt));
   let p = { ...p0 };
   let v = { ...v0 };
   const points = [[p.x, p.y, p.z]];
@@ -41,7 +44,7 @@ export function simulate(p0, v0, flight, { dt = 0.001, stop } = {}) {
       return { points, landing, velocity: v, netCrossing, time: (step - 1 + t) * dt, speed };
     }
     p = next;
-    if (step % 10 === 0) points.push([p.x, p.y, p.z]);
+    if (step % every === 0) points.push([p.x, p.y, p.z]);
   }
   return { points, landing: null, velocity: v, netCrossing, time: 5, speed: Math.hypot(v.x, v.y, v.z) };
 }
@@ -243,19 +246,14 @@ export function solveTarget(p0, target, speed, court, flight) {
 // Above full standing reach the body is lifted (the jump, capped at maxJump); below it the body steps back so the
 // contact is in front. When the contact is beyond reach, tip is where the racket centre ends and shortfall is the gap.
 export function reachPose(contact, height, player, maxJump = Infinity) {
-  const s = player.segments;
-  const { forward, right } = hitterFrame(contact.z);
-  const arm = (s.upperArm + s.forearm + s.hand / 2) * height; // shoulder to the middle of the grip hand
-  const racket = (player.racket.overallLengthMm - player.racket.stringAreaLengthMm / 2) / 1000; // butt to string-bed centre
-  const chain = arm + racket;
-  const shoulderStand = s.shoulderHeight * height;
+  const { forward } = hitterFrame(contact.z);
+  const { arm, chain, halfWidth, right, base: { y: shoulderStand } } = reachFrame(contact, height, player);
   const rise = contact.y - shoulderStand;
   const lift = Math.min(maxJump, Math.max(0, rise - chain));
   const back = Math.sqrt(Math.max(0, chain ** 2 - Math.min(rise, chain) ** 2));
   const shoulder = { x: contact.x, y: shoulderStand + lift, z: contact.z - forward * back };
   const gap = Math.hypot(contact.x - shoulder.x, contact.y - shoulder.y, contact.z - shoulder.z);
   const along = d => ({ x: shoulder.x + (contact.x - shoulder.x) * d / gap, y: shoulder.y + (contact.y - shoulder.y) * d / gap, z: shoulder.z + (contact.z - shoulder.z) * d / gap });
-  const halfWidth = s.shoulderWidth / 2 * height;
   return {
     lift, standingReach: shoulderStand + chain, maxReach: shoulderStand + chain + maxJump,
     reachable: gap <= chain + 1e-9, shortfall: Math.max(0, gap - chain),
@@ -276,14 +274,17 @@ export function estimateJump({ sex, height, mass, level }, model) {
   return Math.max(model.minimumCm, (power - sayers.constant - sayers.perKgMass * mass) / sayers.perCmJump) / 100;
 }
 
+// Racket length from the butt (in the hand) to the string-bed centre, in metres (player.json racket, Law 4 limits).
+export const racketReach = racket => (racket.overallLengthMm - racket.stringAreaLengthMm / 2) / 1000;
+
 // Straight-arm reach geometry of a player standing at body (x, z): racket-shoulder base, arm + racket chain length.
+// arm runs from the shoulder to the middle of the grip hand.
 function reachFrame(body, height, player) {
   const s = player.segments;
   const { right } = hitterFrame(body.z);
-  const racket = (player.racket.overallLengthMm - player.racket.stringAreaLengthMm / 2) / 1000;
   const arm = (s.upperArm + s.forearm + s.hand / 2) * height;
   const halfWidth = s.shoulderWidth / 2 * height;
-  return { arm, chain: arm + racket, halfWidth, right, base: { x: body.x + right * halfWidth, y: s.shoulderHeight * height, z: body.z } };
+  return { arm, chain: arm + racketReach(player.racket), halfWidth, right, base: { x: body.x + right * halfWidth, y: s.shoulderHeight * height, z: body.z } };
 }
 
 // Lift needed for a point (x, y, z) from frame f: null if out of horizontal reach, too low (no crouch modelled), or
@@ -367,9 +368,9 @@ export function closestMiss(points, body, height, player, maxJump, minElevation 
     reachable: false, shortfall: Math.max(0, gap - f.chain) };
 }
 
-// Position and direction along recorded flight points (one every 10 ms of flight) at time t (s).
+// Position and direction along recorded flight points (one every FLIGHT_SAMPLE_S) at time t (s).
 export function sampleFlight(points, time) {
-  const f = Math.max(0, Math.min(points.length - 1, time / 0.01));
+  const f = Math.max(0, Math.min(points.length - 1, time / FLIGHT_SAMPLE_S));
   const i = Math.max(0, Math.min(Math.floor(f), points.length - 2));
   const k = f - i;
   const [a, b] = [points[i], points[i + 1] ?? points[i]];

@@ -139,8 +139,8 @@ The shot lab opens in the **incoming shuttle** scenario. **Fixed shuttle** keeps
 - **Path display.** Only one path is drawn at a time.
   - **While running.** The static paths are hidden and the shuttle leaves a 0.4 s trail. The trail fades from transparent at its tail to opaque at the shuttle (per-vertex alpha): white on the incoming flight, then the outcome colour after A's hit. When the shuttle lands, the trail fades out and the static view returns.
   - **Static view.** The incoming flight is drawn at 30% opacity, so the eye goes to A's hit.
-- **Timing.** Flight points are sampled every 10 ms. Each frame rebuilds the shuttle and figure meshes.
-  - `ponytail:` this is fine for one shuttle and two figures; if more objects are added, move them with transforms instead.
+- **Timing.** Flight points are sampled every 10 ms (`FLIGHT_SAMPLE_S`). Each frame rebuilds the shuttle and figure meshes; the scene coalesces those updates into one render per frame.
+  - `ponytail:` rebuilding is fine for one shuttle and up to four figures (the training page); move them with transforms instead when a profile shows frames over 16 ms.
 - **Limits.** The jump timing is ballistic only. Run-up, split step, take-off preparation and swing timing are coach questions and are not modelled.
 
 ## Orientation and load
@@ -155,8 +155,8 @@ The shot lab opens in the **incoming shuttle** scenario. **Fixed shuttle** keeps
 ## Non-goals
 
 - Coaching advice, shot recommendation, or straight versus cross-court preference.
-- Shuttle animation, placing the shuttle by clicking, or a backend trajectory API.
-- Mannequin poses, rigging or movement.
+- Shuttle animation on the homepage sandbox (the shot lab's run test is the only animation here), placing the shuttle by clicking, or a backend trajectory API.
+- Mannequin rigging, footwork or stroke technique. The only poses are the straight-arm reach and the vertical jump described above.
 - Lift, spin, wind and shuttle flip dynamics.
 - Return speed that depends on the incoming speed, and rallies longer than A → B → return candidates.
 

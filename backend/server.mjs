@@ -1,5 +1,7 @@
 import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
+import { gzipSync } from 'node:zlib';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { createLogger } from './logs.mjs';
@@ -10,6 +12,7 @@ const files = {
   '/': ['../frontend/index.html', 'text/html; charset=utf-8'],
   '/site.css': ['../frontend/site.css', 'text/css; charset=utf-8'],
   '/court-app.mjs': ['../frontend/court-app.mjs', 'text/javascript; charset=utf-8'],
+  '/ui.mjs': ['../frontend/ui.mjs', 'text/javascript; charset=utf-8'],
   '/court-geometry.mjs': ['../frontend/court-geometry.mjs', 'text/javascript; charset=utf-8'],
   '/court-3d.mjs': ['../frontend/court-3d.mjs', 'text/javascript; charset=utf-8'],
   '/shot': ['../frontend/shot.html', 'text/html; charset=utf-8'],
@@ -41,6 +44,19 @@ export async function startServer({ dev = false, host = dev ? '127.0.0.1' : proc
   const lessonErrors = validateLessons(lessonData, { court: await reference('court.json'), rules: await reference('rules.json') });
   if (lessonErrors.length) throw new Error(`Invalid lesson data:\n${lessonErrors.join('\n')}`);
   const lessonList = { categories: lessonData.categories, notes: lessonData.notes, lessons: lessonData.lessons.map(({ id, category, title, status }) => ({ id, category, title, status })) };
+  // Static files are cached in memory with a gzip copy and revalidated by ETag; a changed mtime reloads the file,
+  // so edits show up in development without a restart.
+  const cache = new Map();
+  const staticFile = async path => {
+    const url = new URL(path, import.meta.url);
+    const { mtimeMs, size } = await stat(url);
+    const hit = cache.get(path);
+    if (hit && hit.mtimeMs === mtimeMs && hit.size === size) return hit;
+    const body = await readFile(url);
+    const entry = { mtimeMs, size, body, gzip: gzipSync(body), etag: `"${createHash('sha1').update(body).digest('base64url')}"` };
+    cache.set(path, entry);
+    return entry;
+  };
   const json = (res, status, body) => {
     res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
     res.end(JSON.stringify(body));
@@ -65,7 +81,9 @@ export async function startServer({ dev = false, host = dev ? '127.0.0.1' : proc
       }
       if (pathname === '/api/lessons') { json(res, 200, lessonList); return; }
       if (pathname.startsWith('/api/lessons/')) {
-        const lesson = lessonData.lessons.find(item => item.id === decodeURIComponent(pathname.slice('/api/lessons/'.length)));
+        let id = null;
+        try { id = decodeURIComponent(pathname.slice('/api/lessons/'.length)); } catch {} // malformed escape: not a lesson id
+        const lesson = lessonData.lessons.find(item => item.id === id);
         if (!lesson) { json(res, 404, { error: 'Lesson not found' }); return; }
         json(res, 200, { lesson, speeds: lessonData.speeds, sources: lessonData.sources, notes: lessonData.notes });
         return;
@@ -81,9 +99,12 @@ export async function startServer({ dev = false, host = dev ? '127.0.0.1' : proc
       if (!file || (!dev && (pathname === '/dev/logs' || pathname === '/logs.js'))) {
         res.writeHead(404); res.end(); return;
       }
-      const body = await readFile(new URL(file[0], import.meta.url));
-      res.writeHead(200, { 'Content-Type': file[1], 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
-      res.end(body);
+      const entry = await staticFile(file[0]);
+      const headers = { 'Content-Type': file[1], 'Cache-Control': 'no-cache', ETag: entry.etag, Vary: 'Accept-Encoding', 'X-Content-Type-Options': 'nosniff' };
+      if (req.headers['if-none-match'] === entry.etag) { res.writeHead(304, headers); res.end(); return; }
+      const gzip = /\bgzip\b/.test(req.headers['accept-encoding'] ?? '');
+      res.writeHead(200, gzip ? { ...headers, 'Content-Encoding': 'gzip' } : headers);
+      res.end(gzip ? entry.gzip : entry.body);
     } catch (error) {
       logger.write('error', 'server.error', { message: error.code || 'Unexpected server failure' });
       if (!res.headersSent) res.writeHead(500);

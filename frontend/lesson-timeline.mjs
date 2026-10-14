@@ -3,7 +3,7 @@
 // intercepts the previous flight. A final step may have no shot: its receivedBy player takes the last flight, or the
 // shuttle lands when there is no receivedBy. Throws with the lesson and step when a shot cannot be played or reached, so lesson
 // data is checked by the tests and never silently drawn wrong.
-import { aimAt, clearsNet, highestContact, interceptPose, playerToWorld } from './shuttle-physics.mjs';
+import { FLIGHT_SAMPLE_S, aimAt, clearsNet, highestContact, interceptPose, playerToWorld } from './shuttle-physics.mjs';
 
 // Overhead strokes are taken as high as the player can reach (with a jump, arm at least minArmElevationDeg up).
 const OVERHEAD = new Set(['smash', 'clear', 'drop']);
@@ -45,7 +45,7 @@ export function buildTimeline(lesson, { court, flight, speeds, player, height, j
       end = pose.index;
       receiver = { id: catcher, pose };
     }
-    segments.push({ step: i, contact, points: path.points.slice(0, end + 1), duration: end * 0.01, receiver, landing: catcher ? null : path.landing });
+    segments.push({ step: i, contact, points: path.points.slice(0, end + 1), duration: end * FLIGHT_SAMPLE_S, receiver, landing: catcher ? null : path.landing });
     contact = receiver?.pose.contact;
   });
   return segments;

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { aimAt, averageForce, candidatePaths, clearsNet, closestMiss, estimateJump, failedAttempts, highestContact, interceptPose, suggestStand, reachPose, launchVector, minimumHeight, netHeightAt, playerToWorld, receive, shotOutcome, simulate, sixCorners, solveTarget } from '../frontend/shuttle-physics.mjs';
+import { aimAt, averageForce, candidatePaths, clearsNet, closestMiss, estimateJump, failedAttempts, highestContact, interceptPose, suggestStand, reachPose, launchVector, minimumHeight, netHeightAt, playerToWorld, racketReach, receive, shotOutcome, simulate, sixCorners, solveTarget } from '../frontend/shuttle-physics.mjs';
 
 const read = name => JSON.parse(readFileSync(new URL(`../docs/reference/badminton/${name}`, import.meta.url)));
 const court = read('court.json');
@@ -147,7 +147,8 @@ test('the player figure reaches the contact point, jumping only above standing r
   const high = reachPose({ x: 1, y: 3, z: 5.5 }, 1.75, player);
   assert.ok(Math.abs(high.lift - (3 - high.standingReach)) < 1e-9 && high.lift > 0);
   assert.ok(Math.abs(dist(high.shoulder, high.hand) + dist(high.hand, high.contact) - dist(high.shoulder, high.contact)) < 1e-9);
-  assert.ok(Math.abs(dist(high.hand, high.contact) - 0.54) < 1e-9);
+  assert.ok(Math.abs(racketReach(player.racket) - 0.54) < 1e-9, 'butt to string-bed centre: 680 - 280 / 2 mm');
+  assert.ok(Math.abs(dist(high.hand, high.contact) - racketReach(player.racket)) < 1e-9);
   const low = reachPose({ x: 1, y: 2, z: 5.5 }, 1.75, player);
   assert.equal(low.lift, 0);
   assert.ok(low.shoulder.z > 5.5, 'body steps back so the contact is in front');

@@ -1,13 +1,14 @@
 import { courtMetrics, courtSvg } from './court-geometry.mjs';
 import { averageForce, candidatePaths, failedAttempts, minimumHeight, playerToWorld, receive, strokeColours } from './shuttle-physics.mjs';
+import { applyText, formatNumber, getJson, loadCourt3d, loadLang, locale, toggleLang, withCommon } from './ui.mjs';
 
-const words = {
+const words = withCommon({
   vi: {
     edition: 'COURT LAB / 01', kicker: 'KHÁM PHÁ SÂN CẦU LÔNG',
     title: 'Sân cầu lông, nhìn rõ từng vạch.',
     intro: 'Khám phá sân tiêu chuẩn trong không gian 2D và 3D. Mọi số đo đều lấy từ cùng một bộ dữ liệu tham chiếu.',
-    singles: 'Đơn', doubles: 'Đôi', hint2d: 'Nhìn từ trên xuống', hint3d: 'Xoay để khám phá',
-    stageLabel: 'SƠ ĐỒ SÂN TIÊU CHUẨN', reset: 'Đặt lại', loading: 'Đang tải dữ liệu sân…',
+    hint2d: 'Nhìn từ trên xuống', hint3d: 'Xoay để khám phá',
+    stageLabel: 'SƠ ĐỒ SÂN TIÊU CHUẨN', loading: 'Đang tải dữ liệu sân…',
     ready2d: '2D · Sân nhìn từ trên xuống', ready3d: '3D · Kéo để xoay, cuộn để phóng to',
     noWebgl: 'Không thể mở 3D trên trình duyệt này. Đã chuyển về 2D.',
     loadError: 'Không tải được dữ liệu sân. Hãy làm mới trang.',
@@ -21,7 +22,7 @@ const words = {
     sourceTitle: 'NGUỒN KÍCH THƯỚC', sourceNote: 'BWF Laws 5.0 (1), hiệu lực 26/04/2025. Chưa xác nhận đây là bản mới nhất.',
     sourceLink: 'Xem tài liệu BWF ↗', court: 'Sân cầu lông nhìn từ trên xuống', court3d: 'Mô hình sân cầu lông 3D',
     home: 'Trang chủ ShuttleMotion', controls: 'Điều khiển sân', viewGroup: 'Chế độ xem', modeGroup: 'Thể thức', zoomIn: 'Phóng to', zoomOut: 'Thu nhỏ', language: 'Chuyển sang tiếng Anh',
-    shotLink: 'Mô phỏng cú đánh', trainingLink: 'Luyện tập đánh đôi', shuttleTitle: 'QUẢ CẦU', playerTitle: 'NGƯỜI CHƠI', side: 'Phía sân', left: 'Lệch trái (m, âm = phải)', fromNet: 'Cách lưới (m)',
+    shuttleTitle: 'QUẢ CẦU', playerTitle: 'NGƯỜI CHƠI', side: 'Phía sân', left: 'Lệch trái (m, âm = phải)', fromNet: 'Cách lưới (m)',
     height: 'Độ cao (m)', bodyHeight: 'Chiều cao (m)', placeShuttle: 'Đặt quả cầu', placePlayer: 'Đặt người chơi', clear: 'Xoá',
     pathNote: 'Đường bay ứng viên theo vật lý, dùng tốc độ VĐV đỉnh cao đã công bố. Hướng trái/phải tính theo người đánh. Không phải lời khuyên kỹ thuật.',
     world: 'Tọa độ sân', noPaths: 'Không có đường bay hợp lệ từ vị trí này.',
@@ -34,16 +35,15 @@ const words = {
     pickStroke: 'Chọn loại cú đánh để xem đường bay.', pickReturn: 'Chọn loại phản cầu để xem đường bay.',
     noStrokePaths: 'Không có đường hợp lệ cho cú này từ vị trí hiện tại.', needHeight: 'Cần tiếp cầu ở độ cao từ', strokeGroup: 'Loại cú đánh', returnGroup: 'Loại phản cầu',
     returnNote: 'Phản cầu dùng tốc độ VĐV đỉnh cao, chưa tính ảnh hưởng của tốc độ cầu tới. Quả cầu vẽ đúng kích thước thật.',
-    strokes: { smash: 'Đập cầu', clear: 'Phông cầu', drop: 'Bỏ nhỏ' },
-    zones: { front: 'sân trước', mid: 'giữa sân', rear: 'cuối sân' }, lanes: { left: 'trái', centre: 'giữa', right: 'phải' },
+    zones: { front: 'sân trước', mid: 'giữa sân', rear: 'cuối sân' },
     lineNames: { 'doubles-side': 'Biên dọc đôi', 'singles-side': 'Biên dọc đơn', baseline: 'Biên cuối sân', 'short-service': 'Vạch giao cầu ngắn', 'doubles-long-service': 'Vạch giao cầu dài đôi', centre: 'Vạch giữa ô giao cầu' }
   },
   en: {
     edition: 'COURT LAB / 01', kicker: 'EXPLORE THE BADMINTON COURT',
     title: 'The badminton court, line by line.',
     intro: 'Explore a standard court in 2D and 3D. Every measurement comes from the same reference dataset.',
-    singles: 'Singles', doubles: 'Doubles', hint2d: 'Top-down view', hint3d: 'Orbit to explore',
-    stageLabel: 'STANDARD COURT DIAGRAM', reset: 'Reset', loading: 'Loading court data…',
+    hint2d: 'Top-down view', hint3d: 'Orbit to explore',
+    stageLabel: 'STANDARD COURT DIAGRAM', loading: 'Loading court data…',
     ready2d: '2D · Top-down court view', ready3d: '3D · Drag to orbit, scroll to zoom',
     noWebgl: '3D is unavailable in this browser. Switched to 2D.',
     loadError: 'Court data could not be loaded. Please refresh the page.',
@@ -57,7 +57,7 @@ const words = {
     sourceTitle: 'DIMENSION SOURCE', sourceNote: 'BWF Laws 5.0 (1), effective 26 April 2025. The latest version has not been confirmed.',
     sourceLink: 'View BWF document ↗', court: 'Top-down badminton court', court3d: '3D badminton court model',
     home: 'ShuttleMotion home', controls: 'Court controls', viewGroup: 'View mode', modeGroup: 'Match type', zoomIn: 'Zoom in', zoomOut: 'Zoom out', language: 'Switch to Vietnamese',
-    shotLink: 'Shot lab', trainingLink: 'Doubles training', shuttleTitle: 'SHUTTLE', playerTitle: 'PLAYER', side: 'Court side', left: 'Left offset (m, negative = right)', fromNet: 'From net (m)',
+    shuttleTitle: 'SHUTTLE', playerTitle: 'PLAYER', side: 'Court side', left: 'Left offset (m, negative = right)', fromNet: 'From net (m)',
     height: 'Height (m)', bodyHeight: 'Body height (m)', placeShuttle: 'Place shuttle', placePlayer: 'Place player', clear: 'Clear',
     pathNote: 'Physics candidate paths using published elite launch speeds. Left and right are from the hitter\'s view. Not coaching advice.',
     world: 'Court coordinates', noPaths: 'No valid path from this position.',
@@ -70,17 +70,16 @@ const words = {
     pickStroke: 'Choose a stroke type to see its paths.', pickReturn: 'Choose a return stroke to see its paths.',
     noStrokePaths: 'No valid path for this stroke from the current position.', needHeight: 'Needs a contact height of at least', strokeGroup: 'Stroke type', returnGroup: 'Return stroke',
     returnNote: 'Returns use elite launch speeds and ignore the incoming speed. The shuttle is drawn life size.',
-    strokes: { smash: 'Smash', clear: 'Clear', drop: 'Drop' },
-    zones: { front: 'forecourt', mid: 'midcourt', rear: 'rearcourt' }, lanes: { left: 'left', centre: 'centre', right: 'right' },
+    zones: { front: 'forecourt', mid: 'midcourt', rear: 'rearcourt' },
     lineNames: { 'doubles-side': 'Doubles sideline', 'singles-side': 'Singles sideline', baseline: 'Back boundary', 'short-service': 'Short service line', 'doubles-long-service': 'Doubles long service line', centre: 'Centre service line' }
   }
-};
+});
 
 const host = document.querySelector('#court-host');
 const status = document.querySelector('#stage-status');
 const langButton = document.querySelector('#language');
 const hint = document.querySelector('#view-hint');
-const state = { view: '2d', mode: 'singles', lang: 'vi', zoom: 1, shuttle: null, paths: [], hidden: new Set(), player: null, selected: null, reception: null, returns: [], stroke: null, returnStroke: null, minHeight: null, failed: [], failedReturns: [] };
+const state = { view: '2d', mode: 'singles', lang: loadLang(), zoom: 1, shuttle: null, paths: [], hidden: new Set(), player: null, selected: null, reception: null, returns: [], stroke: null, returnStroke: null, minHeight: null, failed: [], failedReturns: [] };
 const failColours = { net: '#ff4d4d', out: '#ffb347', short: '#ffb347', in: '#ffb347' };
 const shuttleForm = document.querySelector('#shuttle-form');
 const playerForm = document.querySelector('#player-form');
@@ -88,13 +87,9 @@ let court;
 let shuttleData;
 let scene3d;
 
-try { if (localStorage.getItem('shuttlemotion-language') === 'en') state.lang = 'en'; } catch {}
-
 function translate() {
   const t = words[state.lang];
-  document.documentElement.lang = state.lang;
-  for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = t[el.dataset.i18n];
-  langButton.textContent = state.lang === 'vi' ? 'EN' : 'VI';
+  applyText(t, state.lang);
   langButton.setAttribute('aria-label', t.language);
   document.querySelector('.brand').setAttribute('aria-label', t.home);
   document.querySelector('.toolbar').setAttribute('aria-label', t.controls);
@@ -109,9 +104,7 @@ function translate() {
   if (scene3d) host.querySelector('canvas')?.setAttribute('aria-label', t.court3d);
 }
 
-const fmt = (value, digits = 2) => new Intl.NumberFormat(state.lang === 'vi' ? 'vi-VN' : 'en-US', {
-  minimumFractionDigits: digits, maximumFractionDigits: digits
-}).format(value);
+const fmt = (value, digits = 2) => formatNumber(state.lang, value, digits);
 
 function renderMetrics() {
   const m = courtMetrics(court);
@@ -132,15 +125,14 @@ function updateButtons() {
 function show2d() {
   scene3d?.dispose();
   scene3d = undefined;
-  host.innerHTML = courtSvg(court, state.mode, words[state.lang], state.lang === 'vi' ? 'vi-VN' : 'en-US', overlay2d());
+  host.innerHTML = courtSvg(court, state.mode, words[state.lang], locale(state.lang), overlay2d());
   host.querySelector('svg').style.transform = `scale(${state.zoom})`;
   status.textContent = words[state.lang].ready2d;
 }
 
 async function show3d() {
   try {
-    if (!document.createElement('canvas').getContext('webgl2')) throw new Error('WebGL2 unavailable');
-    const { mountCourt3d } = await import('./court-3d.mjs');
+    const mountCourt3d = await loadCourt3d();
     if (state.view !== '3d') return;
     host.replaceChildren();
     scene3d = mountCourt3d(host, court, state.mode, words[state.lang].court3d, shuttleData.specification);
@@ -173,8 +165,7 @@ document.querySelectorAll('[data-mode]').forEach(button => button.addEventListen
   if (state.view === '2d') show2d(); else { scene3d?.setMode(state.mode); applyScene(); }
 }));
 langButton.addEventListener('click', () => {
-  state.lang = state.lang === 'vi' ? 'en' : 'vi';
-  try { localStorage.setItem('shuttlemotion-language', state.lang); } catch {}
+  state.lang = toggleLang(state.lang);
   translate();
   if (court && state.view === '2d') show2d();
 });
@@ -371,9 +362,7 @@ function zoom(direction) {
 
 translate();
 try {
-  const [courtResponse, shuttleResponse] = await Promise.all([fetch('/assets/court.json'), fetch('/assets/shuttle.json')]);
-  if (!courtResponse.ok || !shuttleResponse.ok) throw new Error(`HTTP ${courtResponse.status}/${shuttleResponse.status}`);
-  [court, shuttleData] = await Promise.all([courtResponse.json(), shuttleResponse.json()]);
+  [court, shuttleData] = await Promise.all(['/assets/court.json', '/assets/shuttle.json'].map(getJson));
   if (court.unit !== 'm' || !Array.isArray(court.markings?.rectangles)) throw new Error('Invalid court data');
   renderMetrics();
   show2d();

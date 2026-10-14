@@ -29,7 +29,7 @@ npm run deploy:prepare
 npm start
 ```
 
-`deploy:prepare` validates Node and the lockfile, performs a clean `npm ci`, and runs tests. Run it in the build or install stage of a Node-compatible host before `npm start`. No frontend build step or CDN is required; the server serves the pinned Three.js modules locally. The production process uses `PORT` and optional `HOST` (`0.0.0.0` by default) and writes process events to stdout. A hosting provider has not been selected.
+`deploy:prepare` validates Node and the lockfile, performs a clean `npm ci`, and runs tests. Run it in the build or install stage of a Node-compatible host before `npm start`. No frontend build step or CDN is required; the server serves the pinned Three.js modules locally, gzip-compressed and revalidated by ETag, so browsers download them once. The production process uses `PORT` and optional `HOST` (`0.0.0.0` by default) and writes process events to stdout. A hosting provider has not been selected.
 
 If setup fails, read the npm error and check Node version, network access, write access, and whether `package.json` matches `package-lock.json`. A deployment runtime should not have to install packages while serving requests.
 

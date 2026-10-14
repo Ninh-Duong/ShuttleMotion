@@ -33,6 +33,9 @@ test('broken lessons are rejected for each rule', () => {
   assert.match(broken((d, l) => { l.steps[2].quote = { text: '' }; }), /verbatim quote/);
   assert.match(broken((d, l) => { l.steps[2].quote.sourceId = 'chen-2009-jssm'; }), /one of the lesson sources/);
   assert.match(broken(d => { d.speeds.block = { speed: 10 }; }), /illustrative/);
+  assert.match(broken((d, l) => { l.steps[2].positions.A1 = { left: 3.2, fromNet: 3 }; }), /off the court area/);
+  assert.match(broken((d, l) => { l.steps[2].positions.A1 = { left: 0, fromNet: 7.6 }; }), /off the court area/);
+  assert.match(broken((d, l) => { l.steps[2].shot.to = { left: 0, fromNet: 6.8 }; }), /outside the court/);
 });
 
 test('every shot can be played and reached by the next player', () => {
@@ -58,6 +61,7 @@ test('the lesson API lists lessons and serves each one', async () => {
     assert.equal(detail.status, 200);
     assert.equal((await detail.json()).lesson.steps.length, data.lessons[0].steps.length);
     assert.equal((await fetch(`${base}/api/lessons/nope`)).status, 404);
+    assert.equal((await fetch(`${base}/api/lessons/%E0%A4%A`)).status, 404);
     assert.equal((await fetch(`${base}/training`)).status, 200);
   } finally { await new Promise(resolve => server.close(resolve)); }
 });

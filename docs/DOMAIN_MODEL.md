@@ -40,6 +40,8 @@ Court coordinate convention is fixed by `reference/badminton/court.json`: metres
 - Which skill is the best first example for teaching movement in 3D?
 - Will the first lesson use a rigged 3D avatar, simpler markers and paths, or both? The sandbox currently uses a primitive mannequin.
 - What launch speeds suit the target learners, and for which strokes beyond smash, clear and drop?
+- What body and jump heights should the player figure use for the target learners? The shot lab estimates the jump from sex, height, mass and level unless a measured jump is entered.
+
 ## Lesson data in use
 
 The first lessons are stored in `backend/lessons/doubles.json` and served by the lesson API.
@@ -65,5 +67,3 @@ A hit has a launch speed, a racket-face tilt and a direction. Scenarios are loca
 ## Player profile
 
 A player in the shot lab has a sex, height (m), body mass (kg), jump fitness level (weak / average / good) and an optional measured jump (cm). When no jump is entered, it is estimated from `reference/badminton/player.json` `jumpModel`. Profiles are local page inputs and are not stored.
-
-- What body and jump heights should the player figure use for the target learners? The shot lab estimates the jump from sex, height, mass and level unless a measured jump is entered.
