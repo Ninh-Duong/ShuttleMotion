@@ -1,4 +1,4 @@
-import { FLIGHT_SAMPLE_S, aimAt, clearsNet, closestMiss, estimateJump, highestContact, interceptPose, launchVector, playerToWorld, reachPose, sampleFlight, shotOutcome, simulate, sixCorners, solveTarget, suggestStand } from './shuttle-physics.mjs';
+import { FLIGHT_SAMPLE_S, aimAt, clearsNet, closestMiss, estimateJump, evaluateInterception, highestContact, interceptPose, launchVector, playerToWorld, reachPose, sampleFlight, shotOutcome, simulate, sixCorners, solveTarget, suggestStand } from './shuttle-physics.mjs';
 import { applyText, formatNumber, getJson, loadCourt3d, loadLang, toggleLang, withCommon } from './ui.mjs';
 
 const words = withCommon({
@@ -13,6 +13,9 @@ const words = withCommon({
     jumpEst: 'Bật nhảy ước lượng', jumpSet: 'Bật nhảy nhập', reachText: 'tầm với đứng', maxReach: 'tối đa',
     jumpNeed: 'cần bật', noJump: 'không cần bật; lùi lại để điểm tiếp cầu ở trước người (BWF Shuttle Time)',
     cannotReach: 'KHÔNG VỚI TỚI: thiếu', receives: 'B đỡ được ở độ cao', receivesJump: 'bật', bMisses: 'B không với tới đường cầu từ vị trí này', noCross: 'Cầu không sang tới sân B',
+    receivesStanding: 'B đón tại chỗ ở độ cao', receivesMove: 'B di chuyển đón kịp ở độ cao', receivesRushed: 'B rướn người cứu cầu ở độ cao',
+    bAced: 'B KHÔNG KỊP PHẢN XẠ (Cháy vợt)', bTooLate: 'B CHẠY KHÔNG KỊP (Cầu chạm đất trước)',
+    flightTimeLabel: 'Thời gian bay', reactionTimeLabel: 'thời gian phản xạ', marginLabel: 'Dư', deficitLabel: 'Thiếu', travelDistLabel: 'chạy', needMove: 'cần chạy',
     toNet: 'về phía lưới', launch: 'hướng cầu bay', face: 'mặt vợt',
     run: '▶ Chạy thử', slow: 'Chậm ×0,25', incomingMode: 'Cầu bay tới', fixedMode: 'Cầu đứng yên', hitTitle: 'CÚ ĐÁNH CỦA A',
     incomingTitle: 'CẦU BAY TỚI · B ĐÁNH SANG', incomingHint: 'B đánh từ vị trí trong thẻ người chơi B. Chọn điểm cầu sẽ rơi xuống bên A nếu A không đánh.',
@@ -44,6 +47,9 @@ const words = withCommon({
     jumpEst: 'Estimated jump', jumpSet: 'Entered jump', reachText: 'standing reach', maxReach: 'max',
     jumpNeed: 'needs a jump of', noJump: 'no jump needed; steps back so the contact is in front (BWF Shuttle Time)',
     cannotReach: 'OUT OF REACH: short by', receives: 'B reaches it at', receivesJump: 'jump', bMisses: 'B cannot reach the flight from this position', noCross: 'The shuttle does not reach side B',
+    receivesStanding: 'B intercepts standing at', receivesMove: 'B moves and intercepts at', receivesRushed: 'B scrambles and intercepts at',
+    bAced: 'B CAUGHT FLAT-FOOTED (Aced)', bTooLate: 'B OUT OF TIME (Shuttle lands first)',
+    flightTimeLabel: 'Flight time', reactionTimeLabel: 'reaction time', marginLabel: 'Margin', deficitLabel: 'Short by', travelDistLabel: 'move', needMove: 'needs to move',
     toNet: 'towards the net', launch: 'launch', face: 'racket face',
     run: '▶ Run test', slow: 'Slow ×0.25', incomingMode: 'Incoming shuttle', fixedMode: 'Fixed shuttle', hitTitle: "A'S HIT",
     incomingTitle: 'INCOMING SHUTTLE · HIT BY B', incomingHint: "B hits from the position in player B's card. Choose where the shuttle would land on A's side if A did not hit it.",
@@ -212,9 +218,10 @@ function simulateHit() {
 function profile(id) {
   const height = num(`${id}-height`);
   const entered = form.elements[`${id}-jump`].value;
-  const estimate = estimateJump({ sex: form.elements[`${id}-sex`].value, height, mass: num(`${id}-mass`), level: form.elements[`${id}-level`].value }, player.jumpModel);
+  const level = form.elements[`${id}-level`].value;
+  const estimate = estimateJump({ sex: form.elements[`${id}-sex`].value, height, mass: num(`${id}-mass`), level }, player.jumpModel);
   form.elements[`${id}-jump`].placeholder = fmt(estimate * 100, 0);
-  return { height, jump: entered === '' ? estimate : Number(entered) / 100, estimated: entered === '' };
+  return { height, jump: entered === '' ? estimate : Number(entered) / 100, estimated: entered === '', level };
 }
 
 // The figures show reach and jump height from body proportions only; they are not a technique model.
@@ -237,16 +244,50 @@ function renderPlayers(p0, outcome) {
     scene?.setPlayer({ x: pose.body.x, z: pose.body.z, height: a.height, lift: pose.lift, halfWidth: pose.halfWidth, arm: { ...pose, normal: state.outgoing?.v0 }, racket: player.racket }, 'A');
   }
   const boxB = document.querySelector('#reach-B');
+  boxB.classList.remove('warn');
   if (!form.elements['B-show'].checked) { boxB.textContent = ''; scene?.setPlayer(null, 'B'); return; }
   const b = profile('B');
   const body = playerToWorld(otherSide(), { left: num('B-left'), fromNet: num('B-fromNet'), height: 0 });
-  const pose = !outcome || outcome.result === 'net' || outcome.result === 'short' ? null : interceptPose(outcome.points, body, b.height, player, b.jump);
-  const status = !outcome ? '' : outcome.result === 'net' || outcome.result === 'short' ? w.noCross
-    : pose ? `${w.receives} ${fmt(pose.contact.y)} m` + (pose.lift > 0 ? ` (${w.receivesJump} ${fmt(pose.lift * 100, 0)} cm)` : '') : w.bMisses;
+  const evalB = !outcome || outcome.result === 'net' || outcome.result === 'short'
+    ? null
+    : evaluateInterception(outcome.points, body, b.height, player, b.jump, { level: b.level });
+
+  let status = '';
+  if (!outcome) {
+    status = '';
+  } else if (outcome.result === 'net' || outcome.result === 'short') {
+    status = w.noCross;
+  } else if (evalB) {
+    const jumpText = evalB.pose?.lift > 0 ? ` (${w.receivesJump} ${fmt(evalB.pose.lift * 100, 0)} cm)` : '';
+    if (evalB.status === 'standing') {
+      status = `${w.receivesStanding} ${fmt(evalB.pose.contact.y)} m${jumpText} · ${w.flightTimeLabel}: ${fmt(evalB.flightTime, 2)} s (${w.marginLabel} +${fmt(evalB.margin, 2)} s)`;
+    } else if (evalB.status === 'comfortable' || evalB.status === 'rushed') {
+      const verb = evalB.status === 'rushed' ? w.receivesRushed : w.receivesMove;
+      status = `${verb} ${fmt(evalB.pose.contact.y)} m${jumpText} (${w.travelDistLabel} ${fmt(evalB.travelDistance, 1)} m) · ${w.marginLabel} +${fmt(evalB.margin, 2)} s`;
+    } else if (evalB.status === 'too_fast') {
+      status = `${w.bAced} · ${w.flightTimeLabel}: ${fmt(evalB.flightTime, 2)} s < ${fmt(evalB.reactionTime, 2)} s ${w.reactionTimeLabel} (${w.deficitLabel} -${fmt(evalB.timeDeficit, 2)} s)`;
+      boxB.classList.add('warn');
+    } else if (evalB.status === 'too_late') {
+      status = `${w.bTooLate} (${w.needMove} ${fmt(evalB.travelDistance, 1)} m, ${w.deficitLabel} -${fmt(evalB.timeDeficit, 2)} s)`;
+      boxB.classList.add('warn');
+    } else {
+      status = w.bMisses;
+      boxB.classList.add('warn');
+    }
+  }
+
   boxB.textContent = status ? `${jumpLine(b)} · ${status}` : jumpLine(b);
-  scene?.setPlayer(pose
-    ? { x: body.x, z: body.z, height: b.height, lift: pose.lift, halfWidth: pose.halfWidth, arm: pose, kit: 0xd8573c, racket: player.racket }
-    : { x: body.x, z: body.z, height: b.height, kit: 0xd8573c, racket: player.racket }, 'B');
+  if (!evalB || !evalB.feasible || !evalB.pose) {
+    const missPose = evalB?.closestMiss;
+    scene?.setPlayer(missPose
+      ? { x: body.x, z: body.z, height: b.height, lift: missPose.lift, halfWidth: missPose.halfWidth, arm: missPose, kit: 0xd8573c, racket: player.racket }
+      : { x: body.x, z: body.z, height: b.height, kit: 0xd8573c, racket: player.racket }, 'B');
+  } else {
+    scene?.setPlayer({
+      x: evalB.destBody.x, z: evalB.destBody.z, height: b.height,
+      lift: evalB.pose.lift, halfWidth: evalB.pose.halfWidth, arm: evalB.pose, kit: 0xd8573c, racket: player.racket
+    }, 'B');
+  }
 }
 
 // Player A in the incoming scenario at a given lift: reaching for the contact, or standing where they were placed.
@@ -470,6 +511,28 @@ try {
   renderPresets();
   try {
     scene = (await loadCourt3d())(host, court, state.mode, t().stageLabel, shuttle.specification);
+    scene.enableInteraction({
+      getShuttle: () => hitPoint() ?? fixedContact(),
+      onMove: ({ x, z }) => {
+        if (state.scenario === 'fixed') {
+          const side = hitterSide();
+          form.elements.left.value = (side === 'A' ? -x : x).toFixed(2);
+          form.elements.fromNet.value = Math.abs(z).toFixed(2);
+          update(true);
+        } else {
+          const onHitterSide = (hitterSide() === 'A' ? z > 0 : z < 0);
+          if (onHitterSide) {
+            form.elements['in-left'].value = (hitterSide() === 'A' ? -x : x).toFixed(2);
+            form.elements['in-fromNet'].value = Math.abs(z).toFixed(2);
+          } else {
+            form.elements['B-left'].value = (otherSide() === 'A' ? -x : x).toFixed(2);
+            form.elements['B-fromNet'].value = Math.abs(z).toFixed(2);
+          }
+          incomingMemo = { key: null, flight: null };
+          update(true);
+        }
+      }
+    });
     status.textContent = t().ready;
     hitterView();
   } catch (error) {

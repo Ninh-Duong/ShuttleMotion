@@ -141,8 +141,11 @@ export function mountCourt3d(host, court, mode, label, shuttleSpec) {
     model.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(direction.x, direction.y, direction.z).normalize());
     const drop = new THREE.Line(new THREE.BufferGeometry().setFromPoints([model.position, new THREE.Vector3(position.x, 0.01, position.z)]), new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 0.08, gapSize: 0.06 }));
     drop.computeLineDistances();
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.12, 0.22, 32), new THREE.MeshBasicMaterial({ color: 0xffd84d, side: THREE.DoubleSide, transparent: true, opacity: 0.7 }));
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.set(position.x, 0.015, position.z);
     const group = new THREE.Group();
-    group.add(model, drop);
+    group.add(model, drop, ring);
     return group;
   }
   function pathLines(paths, dashed) {
@@ -329,6 +332,89 @@ export function mountCourt3d(host, court, mode, label, shuttleSpec) {
       camera.position.copy(initialPosition);
       controls.target.set(0, 0.25, 0);
       controls.update();
+    },
+    enableInteraction({ onMove, getShuttle }) {
+      const raycaster = new THREE.Raycaster();
+      const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+      const pointer = new THREE.Vector2();
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      let downGround = null;
+
+      function toGround(e) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        if (!rect.width || !rect.height) return null;
+        pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(pointer, camera);
+        const target = new THREE.Vector3();
+        const hit = raycaster.ray.intersectPlane(groundPlane, target);
+        if (!hit) return null;
+        if (Math.abs(target.x) > doublesWidth / 2 + 1.2 || Math.abs(target.z) > length / 2 + 1.2) return null;
+        return target;
+      }
+
+      function isNearShuttle(shuttle, groundHit) {
+        if (!shuttle) return false;
+        if (groundHit && Math.hypot(groundHit.x - shuttle.x, groundHit.z - shuttle.z) <= 0.9) return true;
+        const shuttlePos = new THREE.Vector3(shuttle.x, shuttle.y ?? 2, shuttle.z);
+        return raycaster.ray.distanceToPoint(shuttlePos) <= 0.5;
+      }
+
+      function onPointerDown(e) {
+        if (e.button !== 0) return;
+        startX = e.clientX;
+        startY = e.clientY;
+        downGround = toGround(e);
+        const shuttle = getShuttle?.();
+        if (shuttle && isNearShuttle(shuttle, downGround)) {
+          isDragging = true;
+          controls.enabled = false;
+          renderer.domElement.style.cursor = 'grabbing';
+          try { renderer.domElement.setPointerCapture(e.pointerId); } catch {}
+        }
+      }
+
+      function onPointerMove(e) {
+        if (isDragging) {
+          const target = toGround(e);
+          if (target) onMove({ x: target.x, z: target.z });
+          return;
+        }
+        const shuttle = getShuttle?.();
+        const hover = toGround(e);
+        if (shuttle && isNearShuttle(shuttle, hover)) {
+          renderer.domElement.style.cursor = 'grab';
+        } else {
+          renderer.domElement.style.cursor = 'default';
+        }
+      }
+
+      function onPointerUp(e) {
+        if (isDragging) {
+          isDragging = false;
+          controls.enabled = true;
+          renderer.domElement.style.cursor = 'default';
+          try { renderer.domElement.releasePointerCapture(e.pointerId); } catch {}
+          return;
+        }
+        const moved = Math.hypot(e.clientX - startX, e.clientY - startY);
+        if (moved < 6 && downGround) {
+          onMove({ x: downGround.x, z: downGround.z });
+        }
+      }
+
+      renderer.domElement.addEventListener('pointerdown', onPointerDown);
+      renderer.domElement.addEventListener('pointermove', onPointerMove);
+      renderer.domElement.addEventListener('pointerup', onPointerUp);
+      renderer.domElement.addEventListener('pointercancel', onPointerUp);
+
+      return () => {
+        renderer.domElement.removeEventListener('pointerdown', onPointerDown);
+        renderer.domElement.removeEventListener('pointermove', onPointerMove);
+        renderer.domElement.removeEventListener('pointerup', onPointerUp);
+        renderer.domElement.removeEventListener('pointercancel', onPointerUp);
+      };
     },
     dispose() {
       disposed = true;

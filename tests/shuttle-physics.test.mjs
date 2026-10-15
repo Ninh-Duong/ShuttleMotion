@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { aimAt, averageForce, candidatePaths, clearsNet, closestMiss, estimateJump, failedAttempts, highestContact, interceptPose, suggestStand, reachPose, launchVector, minimumHeight, netHeightAt, playerToWorld, racketReach, receive, shotOutcome, simulate, sixCorners, solveTarget } from '../frontend/shuttle-physics.mjs';
+import { aimAt, averageForce, candidatePaths, clearsNet, closestMiss, estimateJump, evaluateInterception, failedAttempts, highestContact, interceptPose, suggestStand, reachPose, launchVector, minimumHeight, netHeightAt, playerToWorld, racketReach, receive, shotOutcome, simulate, sixCorners, solveTarget } from '../frontend/shuttle-physics.mjs';
 
 const read = name => JSON.parse(readFileSync(new URL(`../docs/reference/badminton/${name}`, import.meta.url)));
 const court = read('court.json');
@@ -239,3 +239,44 @@ test('an out-of-reach or sideways shuttle is a miss with a closest attempt', () 
   const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
   assert.ok(Math.abs(dist(miss.tip, miss.contact) - miss.shortfall) < 1e-9);
 });
+
+test('evaluateInterception checks reaction time standing and movement feasibility', () => {
+  const player = read('player.json');
+  const clears = crossing => clearsNet(court.equipment.net, crossing);
+  
+  // 1. High clear/lob flight: reaches deep court after ~2.1 s
+  const lob = aimAt({ x: 0, y: 2.3, z: -5.5 }, { x: 0, z: 5.5 }, 47.76, flight, { clears, prefer: 'high' });
+  const stand = suggestStand(lob.points, 'A', 1.75, player, 0.4);
+
+  // Standing at the suggested spot: intercepted standing with plenty of reaction time
+  const standingEval = evaluateInterception(lob.points, stand.body, 1.75, player, 0.4);
+  assert.equal(standingEval.feasible, true);
+  assert.equal(standingEval.status, 'standing');
+  assert.equal(standingEval.travelDistance, 0);
+  assert.ok(standingEval.margin > 1.0);
+
+  // Standing 2 m away at midcourt: plenty of time (margin > 0) to move to the rear court
+  const farBody = { x: 0, z: 3.5 };
+  const movingEval = evaluateInterception(lob.points, farBody, 1.75, player, 0.4);
+  assert.equal(movingEval.feasible, true);
+  assert.ok(['comfortable', 'rushed'].includes(movingEval.status));
+  assert.ok(movingEval.travelDistance > 0);
+  assert.ok(movingEval.margin > 0);
+
+  // 2. Fast downward smash: reaches side A at z=3.0 in ~0.35 s
+  const smash = aimAt({ x: 0, y: 2.8, z: -3.0 }, { x: 1.5, z: 3.0 }, 45.31, flight, { clears, minAngle: -40, maxAngle: 0 });
+  if (smash) {
+    // If player stands far away at other corner (x = -2, z = 5), they cannot travel 3.5 m in 0.35 s
+    const outOfTimeEval = evaluateInterception(smash.points, { x: -2, z: 5 }, 1.75, player, 0.4);
+    assert.equal(outOfTimeEval.feasible, false);
+    assert.equal(outOfTimeEval.status, 'too_late');
+    assert.ok(outOfTimeEval.timeDeficit > 0);
+  }
+
+  // If shuttle arrives faster than reaction time at standing spot
+  const fastReactionEval = evaluateInterception(lob.points, stand.body, 1.75, player, 0.4, { reactionTime: 5.0 });
+  assert.equal(fastReactionEval.feasible, false);
+  assert.equal(fastReactionEval.status, 'too_fast');
+  assert.ok(fastReactionEval.timeDeficit > 0);
+});
+

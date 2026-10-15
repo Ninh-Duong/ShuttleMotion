@@ -122,11 +122,89 @@ function updateButtons() {
   hint.textContent = words[state.lang][state.view === '2d' ? 'hint2d' : 'hint3d'];
 }
 
+function setShuttleFromGround({ x, z }) {
+  const side = z >= 0 ? 'A' : 'B';
+  const fromNet = Math.max(0.1, Math.min(6.7, Math.abs(z)));
+  const left = side === 'A' ? -x : x;
+  const clampedLeft = Math.max(-3.05, Math.min(3.05, left));
+  const currentHeight = field('height') ?? 2.0;
+
+  shuttleForm.elements.side.value = side;
+  shuttleForm.elements.fromNet.value = fromNet.toFixed(2);
+  shuttleForm.elements.left.value = clampedLeft.toFixed(2);
+
+  state.shuttle = playerToWorld(side, { left: clampedLeft, fromNet, height: currentHeight });
+  if (!state.stroke) state.stroke = 'smash';
+  updatePaths();
+  applyScene();
+}
+
+function attach2dInteraction(svg) {
+  let isDragging = false;
+
+  function toGround(e) {
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return null;
+    const transformed = pt.matrixTransform(ctm.inverse());
+    if (Math.abs(transformed.x) > court.dimensions.doublesWidth / 2 + 1 || Math.abs(transformed.y) > court.dimensions.length / 2 + 1) return null;
+    return { x: transformed.x, z: transformed.y };
+  }
+
+  svg.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    const p = toGround(e);
+    if (!p) return;
+    isDragging = true;
+    svg.style.cursor = 'grabbing';
+    try { svg.setPointerCapture(e.pointerId); } catch {}
+    setShuttleFromGround(p);
+  });
+
+  svg.addEventListener('pointermove', e => {
+    if (isDragging) {
+      const p = toGround(e);
+      if (p) setShuttleFromGround(p);
+      return;
+    }
+    const s = state.shuttle;
+    const p = toGround(e);
+    if (s && p && Math.hypot(p.x - s.x, p.z - s.z) <= 0.8) {
+      svg.style.cursor = 'grab';
+    } else {
+      svg.style.cursor = 'crosshair';
+    }
+  });
+
+  const stop = e => {
+    if (isDragging) {
+      isDragging = false;
+      svg.style.cursor = 'default';
+      try { svg.releasePointerCapture(e.pointerId); } catch {}
+    }
+  };
+  svg.addEventListener('pointerup', stop);
+  svg.addEventListener('pointercancel', stop);
+}
+
 function show2d() {
   scene3d?.dispose();
   scene3d = undefined;
-  host.innerHTML = courtSvg(court, state.mode, words[state.lang], locale(state.lang), overlay2d());
-  host.querySelector('svg').style.transform = `scale(${state.zoom})`;
+  const existingSvg = host.querySelector('svg');
+  if (existingSvg) {
+    const overlay = existingSvg.querySelector('#court-overlay');
+    if (overlay) {
+      overlay.innerHTML = overlay2d();
+      status.textContent = words[state.lang].ready2d;
+      return;
+    }
+  }
+  host.innerHTML = courtSvg(court, state.mode, words[state.lang], locale(state.lang), `<g id="court-overlay">${overlay2d()}</g>`);
+  const svg = host.querySelector('svg');
+  svg.style.transform = `scale(${state.zoom})`;
+  attach2dInteraction(svg);
   status.textContent = words[state.lang].ready2d;
 }
 
@@ -136,6 +214,10 @@ async function show3d() {
     if (state.view !== '3d') return;
     host.replaceChildren();
     scene3d = mountCourt3d(host, court, state.mode, words[state.lang].court3d, shuttleData.specification);
+    scene3d.enableInteraction({
+      getShuttle: () => state.shuttle,
+      onMove: pos => setShuttleFromGround(pos)
+    });
     applyScene();
     status.textContent = words[state.lang].ready3d;
   } catch (error) {
@@ -187,7 +269,11 @@ function overlay2d() {
     return `<polyline class="shot${extra}" stroke="${colour}" points="${path.points.map(p => `${p[0].toFixed(3)},${p[2].toFixed(3)}`).join(' ')}"/>` + (end ? `<circle cx="${end.x.toFixed(3)}" cy="${end.z.toFixed(3)}" r="0.1" fill="${colour}"/>` : '');
   }).join('');
   const player = state.player ? `<circle class="player" cx="${state.player.x}" cy="${state.player.z}" r="0.22"/>` : '';
-  const shuttle = state.shuttle ? `<circle class="shuttle" cx="${state.shuttle.x}" cy="${state.shuttle.z}" r="0.09"/>` : '';
+  const shuttle = state.shuttle ? `
+    <g class="interactive-shuttle" style="cursor: grab;">
+      <circle cx="${state.shuttle.x.toFixed(3)}" cy="${state.shuttle.z.toFixed(3)}" r="0.25" fill="#ffd84d" fill-opacity="0.25" stroke="#ffd84d" stroke-width="0.03" stroke-dasharray="0.08 0.05"/>
+      <circle class="shuttle" cx="${state.shuttle.x.toFixed(3)}" cy="${state.shuttle.z.toFixed(3)}" r="0.12" fill="#ffd84d" stroke="#10282a" stroke-width="0.03"/>
+    </g>` : '';
   const r = state.reception?.position;
   const reception = r ? `<circle class="reception" cx="${r.x.toFixed(3)}" cy="${r.z.toFixed(3)}" r="0.12"/>` : '';
   return player + lines([...visible(state.paths), ...state.failed], '') + lines([...visible(state.returns), ...state.failedReturns], ' return') + shuttle + reception;
@@ -333,6 +419,21 @@ shuttleForm.addEventListener('submit', event => {
   event.preventDefault();
   if (!court) return;
   state.shuttle = formPosition(shuttleForm);
+  if (!state.stroke) state.stroke = 'smash';
+  updatePaths();
+  applyScene();
+});
+shuttleForm.addEventListener('input', () => {
+  if (!court || !shuttleForm.checkValidity()) return;
+  state.shuttle = formPosition(shuttleForm);
+  if (!state.stroke) state.stroke = 'smash';
+  updatePaths();
+  applyScene();
+});
+shuttleForm.addEventListener('change', () => {
+  if (!court || !shuttleForm.checkValidity()) return;
+  state.shuttle = formPosition(shuttleForm);
+  if (!state.stroke) state.stroke = 'smash';
   updatePaths();
   applyScene();
 });
@@ -345,6 +446,18 @@ for (const name of ['contactHeight', 'contactMs']) shuttleForm.elements[name].ad
 playerForm.addEventListener('submit', event => {
   event.preventDefault();
   if (!court) return;
+  const p = formPosition(playerForm);
+  state.player = { x: p.x, z: p.z, height: p.y };
+  applyScene();
+});
+playerForm.addEventListener('input', () => {
+  if (!court || !playerForm.checkValidity()) return;
+  const p = formPosition(playerForm);
+  state.player = { x: p.x, z: p.z, height: p.y };
+  applyScene();
+});
+playerForm.addEventListener('change', () => {
+  if (!court || !playerForm.checkValidity()) return;
   const p = formPosition(playerForm);
   state.player = { x: p.x, z: p.z, height: p.y };
   applyScene();
@@ -365,6 +478,9 @@ try {
   [court, shuttleData] = await Promise.all(['/assets/court.json', '/assets/shuttle.json'].map(getJson));
   if (court.unit !== 'm' || !Array.isArray(court.markings?.rectangles)) throw new Error('Invalid court data');
   renderMetrics();
+  state.shuttle = formPosition(shuttleForm);
+  state.stroke = 'smash';
+  updatePaths();
   show2d();
 } catch (error) {
   console.error('Court data unavailable:', error);

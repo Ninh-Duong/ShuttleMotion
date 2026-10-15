@@ -368,6 +368,124 @@ export function closestMiss(points, body, height, player, maxJump, minElevation 
     reachable: false, shortfall: Math.max(0, gap - f.chain) };
 }
 
+// Evaluates interception considering player movement speed and reaction time.
+// Checks if the player standing at initial body (x, z) can reach the flight either:
+// 1) Standing at their current spot (travelDistance == 0, requires flightTime >= reactionTime).
+// 2) Moving to an intercept spot (requires flightTime >= reactionTime + travelDistance / moveSpeed).
+export function evaluateInterception(points, body, height, player, maxJump, options = {}) {
+  const reactionTime = options.reactionTime ?? player.movement?.reactionTimeS ?? 0.18;
+  const moveSpeed = options.moveSpeed ?? player.movement?.speedsByLevelMs?.[options.level] ?? 3.8;
+  const minElevation = options.minElevation ?? -Infinity;
+  const sign = Math.sign(body.z);
+  const ownPoints = [];
+  for (let i = 0; i < points.length; i++) {
+    if (Math.sign(points[i][2]) === sign) ownPoints.push({ point: points[i], index: i, flightTime: i * FLIGHT_SAMPLE_S });
+  }
+  if (!ownPoints.length) {
+    return { feasible: false, status: 'no_cross', travelDistance: 0, flightTime: 0, timeNeeded: 0, margin: 0, startBody: { ...body }, destBody: { ...body } };
+  }
+
+  // 1. Standing interception check
+  const standingPose = interceptPose(points, body, height, player, maxJump, minElevation);
+  if (standingPose) {
+    const flightTime = standingPose.index * FLIGHT_SAMPLE_S;
+    if (flightTime >= reactionTime) {
+      return {
+        feasible: true,
+        status: 'standing',
+        pose: standingPose,
+        travelDistance: 0,
+        reactionTime,
+        moveSpeed,
+        flightTime,
+        timeNeeded: reactionTime,
+        margin: flightTime - reactionTime,
+        startBody: { ...body },
+        destBody: { ...body }
+      };
+    }
+    return {
+      feasible: false,
+      status: 'too_fast',
+      pose: standingPose,
+      travelDistance: 0,
+      reactionTime,
+      moveSpeed,
+      flightTime,
+      timeNeeded: reactionTime,
+      margin: flightTime - reactionTime,
+      timeDeficit: reactionTime - flightTime,
+      startBody: { ...body },
+      destBody: { ...body }
+    };
+  }
+
+  // 2. Moving interception check
+  const f = reachFrame(body, height, player);
+  const maxReachHeight = f.base.y + f.chain + maxJump;
+  const candidates = [];
+
+  for (const { point, index, flightTime } of ownPoints) {
+    const [x, y, z] = point;
+    if (y < 0.15 || y > maxReachHeight) continue;
+    const destBody = { x: x - f.right * f.halfWidth, z };
+    const groundDist = Math.hypot(destBody.x - body.x, destBody.z - body.z);
+    const travelDistance = Math.max(0, groundDist - f.chain * 0.7);
+    const timeNeeded = reactionTime + travelDistance / moveSpeed;
+    const margin = flightTime - timeNeeded;
+    if (margin >= 0) {
+      const fDest = reachFrame(destBody, height, player);
+      const lift = liftFor(point, fDest, minElevation);
+      if (lift !== null && lift <= maxJump) {
+        const pose = poseAt(point, fDest, lift, destBody, index);
+        candidates.push({ pose, destBody, travelDistance, flightTime, timeNeeded, margin, height: y });
+      }
+    }
+  }
+
+  if (candidates.length) {
+    candidates.sort((a, b) => (b.height - a.height) || (a.flightTime - b.flightTime));
+    const best = candidates[0];
+    return {
+      feasible: true,
+      status: best.margin >= 0.2 ? 'comfortable' : 'rushed',
+      pose: best.pose,
+      travelDistance: best.travelDistance,
+      reactionTime,
+      moveSpeed,
+      flightTime: best.flightTime,
+      timeNeeded: best.timeNeeded,
+      margin: best.margin,
+      startBody: { ...body },
+      destBody: best.destBody
+    };
+  }
+
+  // 3. Out of time / too late
+  const lastPoint = ownPoints[ownPoints.length - 1];
+  const destBody = { x: lastPoint.point[0] - f.right * f.halfWidth, z: lastPoint.point[2] };
+  const groundDist = Math.hypot(destBody.x - body.x, destBody.z - body.z);
+  const travelDistance = Math.max(0, groundDist - f.chain * 0.7);
+  const timeNeeded = reactionTime + travelDistance / moveSpeed;
+  const flightTime = lastPoint.flightTime;
+  const timeDeficit = timeNeeded - flightTime;
+
+  return {
+    feasible: false,
+    status: 'too_late',
+    travelDistance,
+    reactionTime,
+    moveSpeed,
+    flightTime,
+    timeNeeded,
+    timeDeficit,
+    margin: -timeDeficit,
+    startBody: { ...body },
+    destBody,
+    closestMiss: closestMiss(points, body, height, player, maxJump, minElevation)
+  };
+}
+
 // Position and direction along recorded flight points (one every FLIGHT_SAMPLE_S) at time t (s).
 export function sampleFlight(points, time) {
   const f = Math.max(0, Math.min(points.length - 1, time / FLIGHT_SAMPLE_S));

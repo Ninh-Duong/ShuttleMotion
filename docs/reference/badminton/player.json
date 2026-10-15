@@ -112,6 +112,16 @@
     "minArmElevationDeg": 45,
     "note": "An incoming shuttle counts as hittable overhead only if the straight arm points at least this far above horizontal at contact. Not from a source; a coach should confirm or change it."
   },
+  "movement": {
+    "projectAssumption": true,
+    "reactionTimeS": 0.18,
+    "speedsByLevelMs": {
+      "weak": 3.2,
+      "average": 3.8,
+      "good": 4.4
+    },
+    "note": "Reaction time and court sprint/lunge speed by fitness level. Reaction time includes visual recognition and initial weight shift."
+  },
   "openQuestions": [
     "Typical body height and jump height of the target learners.",
     "Where the coach wants the body relative to the contact point for each stroke (the figure only uses straight-arm reach).",
